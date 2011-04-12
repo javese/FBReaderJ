@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2010-2011 Geometer Plus <contact@geometerplus.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
+ */
+
+package org.geometerplus.android.fbreader.tips;
+
+import org.geometerplus.zlibrary.ui.android.R;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.TextView;
+
+public class TipsDialog /*extends Dialog*/{
+	private AlertDialog myDialog;
+	
+	public TipsDialog(final Activity activity, String title, String mess) {
+		final View view = activity.getLayoutInflater().inflate(R.layout.plugin_dialog, null, false);
+		((TextView)view.findViewById(R.id.plugin_dialog_text)).setText(mess);
+		final CheckBox checkBox = (CheckBox)view.findViewById(R.id.plugin_dialog_checkbox);
+		checkBox.setText("dontAskAgain");
+		
+		myDialog = new AlertDialog.Builder(activity)
+			.setTitle(title)
+			.setView(view)
+			.setIcon(0)
+			.setPositiveButton(
+				"ok", // TODO
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO
+						okAction();
+					}
+				}
+			)
+			.create();
+		
+	}
+
+	private void okAction(){
+//		dismiss();
+	}
+	
+	public void show(){
+		myDialog.show();
+	}
+	
+}
+
+
+

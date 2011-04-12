@@ -43,6 +43,7 @@ import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.library.Book;
 
 import org.geometerplus.android.fbreader.library.KillerCallback;
+import org.geometerplus.android.fbreader.tips.TipsDialog;
 
 import org.geometerplus.android.util.UIUtil;
 
@@ -176,6 +177,9 @@ public final class FBReader extends ZLAndroidActivity {
 		if (!ourNavigatePanel.hasControlPanel()) {
 			ourNavigatePanel.createControlPanel(this, root);
 		}
+		
+		// TODO delete later
+		new TipsDialog(this, "1", "asas").show();
 	}
 
 	@Override
