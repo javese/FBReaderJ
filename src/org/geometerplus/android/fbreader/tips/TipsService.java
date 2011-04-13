@@ -11,7 +11,9 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.network.ZLNetworkException;
 import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
 
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -42,13 +44,13 @@ public class TipsService extends Service {
 			Log.v(TIPS_LOG, "exception: " + e.getMessage());
 		}
 		testParser();
+		
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		Log.v(TIPS_LOG, "TipsService - onDestroy");
-
 	}
 
 	@Override
@@ -57,13 +59,16 @@ public class TipsService extends Service {
 		return null;
 	}
 
-	
-	
 	private void testParser(){
 		ZLFile file = ZLFile.createFileByPath(TIPS_PATH);
 		new OPDSXMLReader(new MyODPSFeedReader()).read(file);
 	}
 
+	
+	// TODO test
+	static String currenId = "fbreader-ru-hint-0000";
+	static Tip myTip;
+	
 	private class MyODPSFeedReader implements OPDSFeedReader{
 		@Override
 		public void processFeedStart() {
@@ -75,16 +80,61 @@ public class TipsService extends Service {
 
 		@Override
 		public boolean processFeedMetadata(OPDSFeedMetadata feed, boolean beforeEntries) {
-			Log.v(TIPS_LOG, "processFeedMetadata >> " + feed.toString());
+			//Log.v(TIPS_LOG, "processFeedMetadata >> " + feed.toString());
 			return false;
 		}
 		
 		@Override
 		public boolean processFeedEntry(OPDSEntry entry) {
 			Log.v(TIPS_LOG, "processFeedEntry >>" + entry.toString());
+			myTip = new Tip(entry);
+			if (myTip.getId().equals(nextId(currenId))){
+				
+//				AlertDialog alertDialog = new AlertDialog.Builder(TipsService.this)
+//				.setTitle("1")
+//				.setIcon(0)
+//				.setPositiveButton(
+//					"ok", // TODO
+//					new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog, int which) {
+//							// TODO
+//						}
+//					}
+//				)
+//				.create();
+//				alertDialog.show();
+				
+				return true;
+			}
 			return false;
 		}
+	}
+	
+	public class Tip {
+		private OPDSEntry myEntry;
 		
+		Tip(OPDSEntry entry){
+			myEntry = entry;
+		}
+
+		public String getId(){
+			return myEntry.Id.Uri;
+		}
+
+		public String getTitle(){
+			return myEntry.Title;
+		}
+
+		public String getSummary(){
+			return myEntry.Summary;
+		}
+	}
+
+	private static String nextId(String id){
+		int val = Integer.parseInt(id.substring(id.length() - 4));
+		val++;
+		String end = Integer.toString(val);
+		return id.substring(0, id.length() - end.length()) + end;
 	}
 	
 }
