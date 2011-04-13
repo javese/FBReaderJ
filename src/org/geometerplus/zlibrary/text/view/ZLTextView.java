@@ -55,7 +55,8 @@ public abstract class ZLTextView extends ZLTextViewBase {
 
 	private final HashMap<ZLTextLineInfo,ZLTextLineInfo> myLineInfoCache = new HashMap<ZLTextLineInfo,ZLTextLineInfo>();
 
-	public ZLTextView() {
+	public ZLTextView(ZLApplication application) {
+		super(application);
  		mySelectionModel = new ZLTextSelectionModel(this);
 	}
 
@@ -67,14 +68,13 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		myCurrentPage.reset();
 		myPreviousPage.reset();
 		myNextPage.reset();
-		setScrollingActive(false);
 		if (myModel != null) {
 			final int paragraphsNumber = myModel.getParagraphsNumber();
 			if (paragraphsNumber > 0) {
 				myCurrentPage.moveStartCursor(ZLTextParagraphCursor.cursor(myModel, 0));
 			}
 		}
-		ZLApplication.Instance().resetView();
+		Application.getViewWidget().reset();
 	}
 
 	public ZLTextModel getModel() {
@@ -127,8 +127,8 @@ public abstract class ZLTextView extends ZLTextViewBase {
 			if (myCurrentPage.StartCursor.isNull()) {
 				preparePaintInfo(myCurrentPage);
 			}
-			ZLApplication.Instance().resetView();
-			ZLApplication.Instance().repaintView();
+			Application.getViewWidget().reset();
+			Application.getViewWidget().repaint();
 		}
 	}
 
@@ -152,8 +152,8 @@ public abstract class ZLTextView extends ZLTextViewBase {
 					(backward ? myModel.getLastMark() : myModel.getFirstMark()) :
 					(backward ? myModel.getPreviousMark(mark) : myModel.getNextMark(mark)));
 			}
-			ZLApplication.Instance().resetView();
-			ZLApplication.Instance().repaintView();
+			Application.getViewWidget().reset();
+			Application.getViewWidget().repaint();
 		}
 		return count;
 	}
@@ -186,8 +186,8 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		if (!findResultsAreEmpty()) {
 			myModel.removeAllMarks();
 			rebuildPaintInfo();
-			ZLApplication.Instance().resetView();
-			ZLApplication.Instance().repaintView();
+			Application.getViewWidget().reset();
+			Application.getViewWidget().repaint();
 		}
 	}
 
@@ -195,35 +195,8 @@ public abstract class ZLTextView extends ZLTextViewBase {
 		return (myModel == null) || myModel.getMarks().isEmpty();
 	}
 
-	private volatile boolean myScrollingIsActive;
-	protected boolean isScrollingActive() {
-		return myScrollingIsActive;
-	}
-	protected void setScrollingActive(boolean active) {
-		myScrollingIsActive = active;
-	}
-
-	public final synchronized void startAutoScrolling(PageIndex pageIndex, Direction direction, int speed) {
-		if (isScrollingActive()) {
-			return;
-		}
-
-		setScrollingActive(true);
-		ZLApplication.Instance().startViewAutoScrolling(pageIndex, direction, speed);
-	}
-
-	public final synchronized void startAutoScrolling(PageIndex pageIndex, Direction direction, int x, int y, int speed) {
-		if (isScrollingActive()) {
-			return;
-		}
-
-		setScrollingActive(true);
-		ZLApplication.Instance().startViewAutoScrolling(pageIndex, direction, x, y, speed);
-	}
-
 	@Override
 	public synchronized void onScrollingFinished(PageIndex pageIndex) {
-		setScrollingActive(false);
 		switch (pageIndex) {
 			case current:
 				break;
@@ -970,10 +943,6 @@ public abstract class ZLTextView extends ZLTextViewBase {
 	}
 
 	public synchronized final void scrollPage(boolean forward, int scrollingMode, int value) {
-		if (isScrollingActive()) {
-			return;
-		}
-
 		preparePaintInfo(myCurrentPage);
 		myPreviousPage.reset();
 		myNextPage.reset();
@@ -992,6 +961,7 @@ public abstract class ZLTextView extends ZLTextViewBase {
 
 	public final synchronized void gotoPosition(int paragraphIndex, int wordIndex, int charIndex) {
 		if (myModel != null && myModel.getParagraphsNumber() > 0) {
+			Application.getViewWidget().reset();
 			myCurrentPage.moveStartCursor(paragraphIndex, wordIndex, charIndex);
 			myPreviousPage.reset();
 			myNextPage.reset();
@@ -1157,7 +1127,7 @@ public abstract class ZLTextView extends ZLTextViewBase {
 
 	public void clearCaches() {
 		rebuildPaintInfo();
-		ZLApplication.Instance().resetView();
+		Application.getViewWidget().reset();
 	}
 
 	protected void rebuildPaintInfo() {
@@ -1290,8 +1260,8 @@ public abstract class ZLTextView extends ZLTextViewBase {
 	@Override
 	public boolean onFingerMove(int x, int y) {
 		if (mySelectionModel.extendTo(x, y)) {
-			ZLApplication.Instance().resetView();
-			ZLApplication.Instance().repaintView();
+			Application.getViewWidget().reset();
+			Application.getViewWidget().repaint();
 			return true;
 		}
 		return false;
@@ -1309,8 +1279,8 @@ public abstract class ZLTextView extends ZLTextViewBase {
 	protected void activateSelection(int x, int y) {
 		if (isSelectionEnabled()) {
 			mySelectionModel.activate(x, y);
-			ZLApplication.Instance().resetView();
-			ZLApplication.Instance().repaintView();
+			Application.getViewWidget().reset();
+			Application.getViewWidget().repaint();
 		}
 	}
 	*/
@@ -1320,6 +1290,7 @@ public abstract class ZLTextView extends ZLTextViewBase {
 
 	public void hideSelectedRegionBorder() {
 		myHighlightSelectedRegion = false;
+		Application.getViewWidget().reset();
 	}
 
 	private ZLTextElementRegion getCurrentElementRegion(ZLTextPage page) {
@@ -1463,5 +1434,29 @@ public abstract class ZLTextView extends ZLTextViewBase {
 				break;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean canScroll(PageIndex index) {
+		switch (index) {
+			default:
+				return true;
+			case next:
+			{
+				final ZLTextWordCursor cursor = getEndCursor();
+				return
+					cursor != null &&
+					!cursor.isNull() &&
+					(!cursor.isEndOfParagraph() || !cursor.getParagraphCursor().isLast());
+			}
+			case previous:
+			{
+				final ZLTextWordCursor cursor = getStartCursor();
+				return
+					cursor != null &&
+					!cursor.isNull() &&
+					(!cursor.isStartOfParagraph() || !cursor.getParagraphCursor().isFirst());
+			}
+		}
 	}
 }
