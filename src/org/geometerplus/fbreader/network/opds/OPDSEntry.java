@@ -21,7 +21,7 @@ package org.geometerplus.fbreader.network.opds;
 
 import org.geometerplus.fbreader.network.atom.*;
 
-class OPDSEntry extends ATOMEntry {
+public class OPDSEntry extends ATOMEntry {
 
 	public String DCLanguage;
 	public String DCPublisher;

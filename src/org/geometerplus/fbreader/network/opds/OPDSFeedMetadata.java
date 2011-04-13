@@ -21,7 +21,7 @@ package org.geometerplus.fbreader.network.opds;
 
 import org.geometerplus.fbreader.network.atom.*;
 
-class OPDSFeedMetadata extends ATOMFeedMetadata {
+public class OPDSFeedMetadata extends ATOMFeedMetadata {
 
 	public int OpensearchTotalResults;
 	public int OpensearchItemsPerPage;

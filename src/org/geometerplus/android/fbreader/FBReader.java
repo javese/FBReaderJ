@@ -19,17 +19,22 @@
 
 package org.geometerplus.android.fbreader;
 
+import java.io.File;
+
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.network.ZLNetworkException;
+import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
 
 import org.geometerplus.zlibrary.text.hyphenation.ZLTextHyphenator;
 
@@ -37,6 +42,7 @@ import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidActivity;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 
+import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.fbreader.ActionCode;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.bookmodel.BookModel;
@@ -44,6 +50,7 @@ import org.geometerplus.fbreader.library.Book;
 
 import org.geometerplus.android.fbreader.library.KillerCallback;
 import org.geometerplus.android.fbreader.tips.TipsDialog;
+import org.geometerplus.android.fbreader.tips.TipsService;
 
 import org.geometerplus.android.util.UIUtil;
 
@@ -179,9 +186,12 @@ public final class FBReader extends ZLAndroidActivity {
 		}
 		
 		// TODO delete later
-		new TipsDialog(this, "1", "asas").show();
+		{
+//			new TipsDialog(this, "1", "test").show();
+			startService(new Intent(getApplicationContext(), TipsService.class));
+		}
 	}
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();

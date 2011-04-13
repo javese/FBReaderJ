@@ -24,14 +24,17 @@ import org.geometerplus.zlibrary.ui.android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class TipsDialog /*extends Dialog*/{
 	private AlertDialog myDialog;
+	private Activity myActivity;
 	
 	public TipsDialog(final Activity activity, String title, String mess) {
+		myActivity = activity;
 		final View view = activity.getLayoutInflater().inflate(R.layout.plugin_dialog, null, false);
 		((TextView)view.findViewById(R.id.plugin_dialog_text)).setText(mess);
 		final CheckBox checkBox = (CheckBox)view.findViewById(R.id.plugin_dialog_checkbox);
@@ -55,7 +58,7 @@ public class TipsDialog /*extends Dialog*/{
 	}
 
 	private void okAction(){
-//		dismiss();
+		
 	}
 	
 	public void show(){

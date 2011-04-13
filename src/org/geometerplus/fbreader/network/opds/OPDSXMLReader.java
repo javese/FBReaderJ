@@ -26,7 +26,7 @@ import org.geometerplus.zlibrary.core.xml.*;
 
 import org.geometerplus.fbreader.network.atom.*;
 
-class OPDSXMLReader extends ZLXMLReaderAdapter {
+public class OPDSXMLReader extends ZLXMLReaderAdapter {
 	public static final String KEY_PRICE = "price";
 
 
