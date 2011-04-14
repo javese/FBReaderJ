@@ -3,6 +3,8 @@ package org.geometerplus.android.fbreader.tips;
 import java.io.File;
 
 import org.geometerplus.fbreader.Paths;
+import org.geometerplus.fbreader.fbreader.ActionCode;
+import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.network.opds.OPDSEntry;
 import org.geometerplus.fbreader.network.opds.OPDSFeedMetadata;
 import org.geometerplus.fbreader.network.opds.OPDSFeedReader;
@@ -43,8 +45,8 @@ public class TipsService extends Service {
 		} catch (ZLNetworkException e) {
 			Log.v(TIPS_LOG, "exception: " + e.getMessage());
 		}
-		testParser();
 		
+		testParser();
 	}
 
 	@Override
@@ -89,21 +91,8 @@ public class TipsService extends Service {
 			Log.v(TIPS_LOG, "processFeedEntry >>" + entry.toString());
 			myTip = new Tip(entry);
 			if (myTip.getId().equals(nextId(currenId))){
-				
-//				AlertDialog alertDialog = new AlertDialog.Builder(TipsService.this)
-//				.setTitle("1")
-//				.setIcon(0)
-//				.setPositiveButton(
-//					"ok", // TODO
-//					new DialogInterface.OnClickListener() {
-//						public void onClick(DialogInterface dialog, int which) {
-//							// TODO
-//						}
-//					}
-//				)
-//				.create();
-//				alertDialog.show();
-				
+				final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
+				fbReader.doAction(ActionCode.SHOW_TIP);
 				return true;
 			}
 			return false;
