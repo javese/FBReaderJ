@@ -19,18 +19,23 @@
 
 package org.geometerplus.android.fbreader.tips;
 
+import java.io.File;
+
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.network.ZLNetworkException;
+import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
+import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 public class TipsDownloadService extends Service  {
 
 	private static final String TIPS_URL = "http://data.fbreader.org/tips/tips.xml"; // FIXME
 	private static String TIPS_PATH;
-	private static String TIPS_DIRECTORY;
 	
 	@Override
 	public void onCreate() {
@@ -41,17 +46,17 @@ public class TipsDownloadService extends Service  {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+		Log.v(TipsService.TIPS_LOG, "TipsDownloadService - onStart " );
 		
-		TIPS_DIRECTORY = Paths.networkCacheDirectory()+"/tips";
-		ZLFile tipsDir = ZLFile.createFileByPath(TIPS_DIRECTORY);
+		String path = Paths.networkCacheDirectory()+"/tips";
+		ZLFile tipsDir = ZLFile.createFileByPath(path);
 		
-		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips0001.xml";	
-		
-		if (tipsDir.children().size() < 5){
+		int numFiles = tipsDir.children().size();
+		if (numFiles < 5){
 			boolean isContinue = true;
 			while (isContinue){
 				if (TipsUtil.isOnline(this)){
-					downloadTips();
+					downloadTips(numFiles);
 					return; 
 				} else {
 					try {
@@ -75,8 +80,24 @@ public class TipsDownloadService extends Service  {
 
 	}
 
-	private void downloadTips(){
+	private void downloadTips(int numFiles){
 		// TODO
+		ZLStringOption fileOpt = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_FILE, TIPS_PATH);
+		String newFile = fileOpt.getValue();
+		
+		for (int i = 0; i < numFiles; i++){
+			newFile = TipsUtil.netxFile(newFile);
+		}
+		for (int i = 0; i < 5 - numFiles; i++){
+			try {
+				File outFile = new File(newFile);
+				ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
+				newFile = TipsUtil.netxFile(newFile);
+			} catch (ZLNetworkException e) {
+				Log.v(TipsService.TIPS_LOG, "exp : " + e.getMessage());
+			}
+		}
+		
 	}
 	
 	@Override

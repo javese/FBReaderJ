@@ -47,6 +47,7 @@ import org.geometerplus.android.fbreader.library.KillerCallback;
 import org.geometerplus.android.util.UIUtil;
 
 import org.geometerplus.android.fbreader.tips.ShowTipAction;
+import org.geometerplus.android.fbreader.tips.TipsDownloadService;
 import org.geometerplus.android.fbreader.tips.TipsService;
 
 public final class FBReader extends ZLAndroidActivity {
@@ -184,6 +185,7 @@ public final class FBReader extends ZLAndroidActivity {
 		
 		// TODO delete later
 		startService(new Intent(getApplicationContext(), TipsService.class));
+		//startService(new Intent(getApplicationContext(), TipsDownloadService.class));
 	}
 	
 	@Override
