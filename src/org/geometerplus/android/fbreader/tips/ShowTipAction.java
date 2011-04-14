@@ -18,7 +18,7 @@ public class ShowTipAction extends FBAction {
 		Object object = State.popFromState(TipsService.TIPS_STATE_KEY);
 		if (object instanceof Tip){
 			Tip tip = (Tip)object;
-			new TipsDialog(myBaseActivity, tip.getTitle(), tip.getSummary()).show();
+			new TipsDialog(myBaseActivity, tip).show();
 		}
 	}
 

@@ -652,6 +652,9 @@
 			<node name="title" value="Purchase book" />
 			<node name="message" value="Book is already bought" />
 		</node>
+		<node name="tips">
+			<node name="dontShowAgain" value="Don't show again" />
+		</node>
 	</node>
 	<node name="errorMessage">
 		<node name="cannotRunAndroidMarket" value="Cannot access Android Market. Please, install %s manually"/>

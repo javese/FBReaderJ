@@ -20,6 +20,7 @@
 package org.geometerplus.android.fbreader.tips;
 
 import org.geometerplus.android.fbreader.tips.TipsService.Tip;
+import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.ui.android.R;
 
 import android.app.Activity;
@@ -29,7 +30,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-public class TipsDialog /*extends Dialog*/{
+public class TipsDialog {
 	
 	private AlertDialog myDialog;
 
@@ -38,30 +39,32 @@ public class TipsDialog /*extends Dialog*/{
 	}
 	
 	public TipsDialog(final Activity activity, String title, String mess) {
+		final ZLResource dialogResource = ZLResource.resource("dialog");
+		
 		final View view = activity.getLayoutInflater().inflate(R.layout.plugin_dialog, null, false);
 		((TextView)view.findViewById(R.id.plugin_dialog_text)).setText(mess);
 		final CheckBox checkBox = (CheckBox)view.findViewById(R.id.plugin_dialog_checkbox);
-		checkBox.setText("dontAskAgain");
+		checkBox.setText(dialogResource.getResource("tips").getResource("dontShowAgain").getValue());
 		
 		myDialog = new AlertDialog.Builder(activity)
 			.setTitle(title)
 			.setView(view)
 			.setIcon(0)
 			.setPositiveButton(
-				"ok", // TODO
+				dialogResource.getResource("button").getResource("ok").getValue(),
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						// TODO
-						okAction();
+						if(checkBox.isChecked()){
+							donShowAction();
+						}
 					}
 				}
 			)
 			.create();
-		
 	}
 
-	private void okAction(){
-		
+	private void donShowAction(){
+		// TODO
 	}
 	
 	public void show(){

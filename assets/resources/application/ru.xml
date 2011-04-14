@@ -638,6 +638,9 @@
 			<node name="title" value="Покупка книги" />
 			<node name="message" value="Книга уже куплена" />
 		</node>
+		<node name="tips">
+			<node name="dontShowAgain" value="Не показывать больше" />
+		</node>
 	</node>
 	<node name="errorMessage">
 		<node name="cannotRunAndroidMarket" value="Не удается запустить Android Market. Попробуйте установить %s вручную"/>
