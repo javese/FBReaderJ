@@ -1,10 +1,9 @@
 package org.geometerplus.android.fbreader.tips;
 
 import org.geometerplus.android.fbreader.FBReader;
+import org.geometerplus.android.fbreader.tips.TipsService.Tip;
 import org.geometerplus.fbreader.fbreader.FBAction;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
-
-import android.util.Log;
 
 public class ShowTipAction extends FBAction {
 	private final FBReader myBaseActivity;
@@ -16,8 +15,11 @@ public class ShowTipAction extends FBAction {
 	
 	@Override
 	protected void run() {
-		new TipsDialog(myBaseActivity, "1", "2").show();
-		Log.v(TipsService.TIPS_LOG, "ShowTipAction");
+		Object object = State.popFromState(TipsService.TIPS_STATE_KEY);
+		if (object instanceof Tip){
+			Tip tip = (Tip)object;
+			new TipsDialog(myBaseActivity, tip.getTitle(), tip.getSummary()).show();
+		}
 	}
 
 }

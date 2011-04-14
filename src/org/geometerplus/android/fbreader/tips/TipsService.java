@@ -13,18 +13,19 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.network.ZLNetworkException;
 import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
 
-import android.app.AlertDialog;
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
 public class TipsService extends Service {
 	public static final String TIPS_LOG = "tips";
+	public static final String TIPS_STATE_KEY = "tips_state_key";
 	
 	private static final String TIPS_URL = "http://data.fbreader.org/tips/tips.xml"; // FIXME
 	private static String TIPS_PATH;
+	
+	
 	
 	@Override
 	public void onCreate() {
@@ -91,8 +92,11 @@ public class TipsService extends Service {
 			Log.v(TIPS_LOG, "processFeedEntry >>" + entry.toString());
 			myTip = new Tip(entry);
 			if (myTip.getId().equals(nextId(currenId))){
+				State.putToState(TIPS_STATE_KEY, myTip);
+				
 				final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
 				fbReader.doAction(ActionCode.SHOW_TIP);
+				
 				return true;
 			}
 			return false;
