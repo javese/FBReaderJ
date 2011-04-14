@@ -1,5 +1,6 @@
 package org.geometerplus.android.fbreader.tips;
 
+import java.io.File;
 import java.util.Date;
 
 import org.geometerplus.fbreader.Paths;
@@ -10,6 +11,8 @@ import org.geometerplus.fbreader.network.opds.OPDSFeedMetadata;
 import org.geometerplus.fbreader.network.opds.OPDSFeedReader;
 import org.geometerplus.fbreader.network.opds.OPDSXMLReader;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.network.ZLNetworkException;
+import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
 import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
@@ -31,7 +34,8 @@ public class TipsService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		Log.v(TIPS_LOG, "TipsService - onCreate");
-		TIPS_PATH = Paths.networkCacheDirectory()+"/tips1.xml";
+		ZLFile.createFileByPath(Paths.networkCacheDirectory()+"/tips").getPhysicalFile().mkdir();
+
 	}
 
 	@Override
@@ -39,7 +43,9 @@ public class TipsService extends Service {
 		super.onStart(intent, startId);
 		Log.v(TIPS_LOG, "TipsService - onStart");
 		
-		// TODO DownloadTipsService
+		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips0001.xml";	
+
+//		 TODO DownloadTipsService
 //		try {
 //			File outFile = new File(TIPS_PATH);
 //			ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
@@ -48,6 +54,7 @@ public class TipsService extends Service {
 //			Log.v(TIPS_LOG, "exception: " + e.getMessage());
 //		}
 
+		
 		boolean isShowTips = new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true).getValue();
 		if (isShowTips){
 			int currDate = new Date().getDate();
@@ -55,7 +62,7 @@ public class TipsService extends Service {
 
 			// FIXME later
 			if (lastDate <= currDate){
-				testParser();
+				startParser();
 			}
 		}
 	}
@@ -73,26 +80,53 @@ public class TipsService extends Service {
 	}
 
 	//TODO
-	static String currenId = "fbreader-ru-hint-0000";
-	private void testParser(){
-		String currTipsFile = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_FILE, TIPS_PATH).getValue();
-		String currId = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, currenId).getValue();
-		
-		ZLFile file = ZLFile.createFileByPath(currTipsFile);
+	static String defaultId = "fbreader-ru-hint-0000";
+	private void startParser(){
+		ZLStringOption fileOpt = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_FILE, TIPS_PATH);
+		ZLStringOption idOpt = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, defaultId);
+		String currFile = fileOpt.getValue();
+		String currId = idOpt.getValue();
+
+		Log.v(TIPS_LOG, currFile + "  " + currId);
+		if (getIntId(currId) >= 2){
+			ZLFile.createFileByPath(currFile).getPhysicalFile().delete(); // attention
+			
+			String nextFile = netxFile(currFile);
+			Log.v(TIPS_LOG, "nextFile: " + nextFile);
+			
+			if (ZLFile.createFileByPath(nextFile).exists()){
+				currFile = nextFile;
+				currId = defaultId;
+				fileOpt.setValue(currFile);				
+			} else {
+				return;
+			}
+		}
+
+		// run parser
+		ZLFile file = ZLFile.createFileByPath(currFile);
 		new OPDSXMLReader(new TipsODPSFeedReader(nextId(currId))).read(file);
-		
-		// TODO
-		new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, currenId).setValue(nextId(currId));
-		
+		idOpt.setValue(nextId(currId));
 	}
 
-	
 	private class TipsODPSFeedReader implements OPDSFeedReader{
-		String myId;
-		TipsODPSFeedReader(String id){
-			myId = id;
+		String myTipId;
+		TipsODPSFeedReader(String tipId){
+			myTipId = tipId;
 		}
-		
+
+		@Override
+		public boolean processFeedEntry(OPDSEntry entry) {
+			Tip tip = new Tip(entry);
+			if (tip.getId().equals(myTipId)){
+				State.putToState(TIPS_STATE_KEY, tip);
+				final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
+				fbReader.doAction(ActionCode.SHOW_TIP);
+				return true;
+			}
+			return false;
+		}
+
 		@Override
 		public void processFeedStart() {
 		}
@@ -106,18 +140,6 @@ public class TipsService extends Service {
 			return false;
 		}
 		
-		@Override
-		public boolean processFeedEntry(OPDSEntry entry) {
-			//Log.v(TIPS_LOG, "processFeedEntry >>" + entry.toString());
-			Tip tip = new Tip(entry);
-			if (tip.getId().equals(myId)){
-				State.putToState(TIPS_STATE_KEY, tip);
-				final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
-				fbReader.doAction(ActionCode.SHOW_TIP);
-				return true;
-			}
-			return false;
-		}
 	}
 	
 	public class Tip {
