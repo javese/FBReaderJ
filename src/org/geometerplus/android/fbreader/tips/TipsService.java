@@ -1,6 +1,24 @@
+/*
+ * Copyright (C) 2009-2011 Geometer Plus <contact@geometerplus.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
+ */
+
 package org.geometerplus.android.fbreader.tips;
 
-import java.io.File;
 import java.util.Date;
 
 import org.geometerplus.fbreader.Paths;
@@ -11,8 +29,6 @@ import org.geometerplus.fbreader.network.opds.OPDSFeedMetadata;
 import org.geometerplus.fbreader.network.opds.OPDSFeedReader;
 import org.geometerplus.fbreader.network.opds.OPDSXMLReader;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
-import org.geometerplus.zlibrary.core.network.ZLNetworkException;
-import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
 import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 import org.geometerplus.zlibrary.core.options.ZLStringOption;
@@ -26,9 +42,7 @@ public class TipsService extends Service {
 	public static final String TIPS_LOG = "tips";
 	public static final String TIPS_STATE_KEY = "tips_state_key";
 	
-	private static final String TIPS_URL = "http://data.fbreader.org/tips/tips.xml"; // FIXME
 	private static String TIPS_PATH;
-	
 	
 	@Override
 	public void onCreate() {
@@ -45,22 +59,12 @@ public class TipsService extends Service {
 		
 		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips0001.xml";	
 
-//		 TODO DownloadTipsService
-//		try {
-//			File outFile = new File(TIPS_PATH);
-//			ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
-//			Log.v(TIPS_LOG, "download done");
-//		} catch (ZLNetworkException e) {
-//			Log.v(TIPS_LOG, "exception: " + e.getMessage());
-//		}
-
-		
 		boolean isShowTips = new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true).getValue();
 		if (isShowTips){
 			int currDate = new Date().getDate();
 			int lastDate = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, currDate).getValue();
 
-			// FIXME later
+			// FIXME later (lastDate < currDate)
 			if (lastDate <= currDate){
 				startParser();
 			}
@@ -88,10 +92,10 @@ public class TipsService extends Service {
 		String currId = idOpt.getValue();
 
 		Log.v(TIPS_LOG, currFile + "  " + currId);
-		if (getIntId(currId) >= 2){
+		if (TipsUtil.getIntId(currId) >= 2){
 			ZLFile.createFileByPath(currFile).getPhysicalFile().delete(); // attention
 			
-			String nextFile = netxFile(currFile);
+			String nextFile = TipsUtil.netxFile(currFile);
 			Log.v(TIPS_LOG, "nextFile: " + nextFile);
 			
 			if (ZLFile.createFileByPath(nextFile).exists()){
@@ -104,9 +108,10 @@ public class TipsService extends Service {
 		}
 
 		// run parser
+		String nextTipId = TipsUtil.nextId(currId);
 		ZLFile file = ZLFile.createFileByPath(currFile);
-		new OPDSXMLReader(new TipsODPSFeedReader(nextId(currId))).read(file);
-		idOpt.setValue(nextId(currId));
+		new OPDSXMLReader(new TipsODPSFeedReader(nextTipId)).read(file);
+		idOpt.setValue(nextTipId);
 	}
 
 	private class TipsODPSFeedReader implements OPDSFeedReader{
@@ -162,23 +167,5 @@ public class TipsService extends Service {
 		}
 	}
 	
-	// id format example - "fbreader-ru-hint-0001"
-	private static String nextId(String id){
-		int val = Integer.parseInt(id.substring(id.length() - 4));
-		val++;
-		String end = Integer.toString(val);
-		return id.substring(0, id.length() - end.length()) + end;
-	}
-
-	// id format example - "tips-0001.xml"
-	private static String netxFile(String file){
-		String nextFile = file.substring(0, file.length() - 4); 
-		return nextId(nextFile) + ".xml";
-	}
-	
-	private static int getIntId(String id){
-		int result = Integer.parseInt(id.substring(id.length() - 4));
-		return result;
-	}
 	
 }
