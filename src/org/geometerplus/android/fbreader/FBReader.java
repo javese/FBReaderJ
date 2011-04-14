@@ -19,20 +19,6 @@
 
 package org.geometerplus.android.fbreader;
 
-import org.geometerplus.android.fbreader.library.KillerCallback;
-import org.geometerplus.android.fbreader.tips.ShowTipAction;
-import org.geometerplus.android.fbreader.tips.TipsService;
-import org.geometerplus.android.util.UIUtil;
-import org.geometerplus.fbreader.bookmodel.BookModel;
-import org.geometerplus.fbreader.fbreader.ActionCode;
-import org.geometerplus.fbreader.fbreader.FBReaderApp;
-import org.geometerplus.fbreader.library.Book;
-import org.geometerplus.zlibrary.core.filesystem.ZLFile;
-import org.geometerplus.zlibrary.text.hyphenation.ZLTextHyphenator;
-import org.geometerplus.zlibrary.ui.android.R;
-import org.geometerplus.zlibrary.ui.android.library.ZLAndroidActivity;
-import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
-
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
@@ -42,6 +28,26 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
+import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+
+import org.geometerplus.zlibrary.text.hyphenation.ZLTextHyphenator;
+
+import org.geometerplus.zlibrary.ui.android.R;
+import org.geometerplus.zlibrary.ui.android.library.ZLAndroidActivity;
+import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
+
+import org.geometerplus.fbreader.fbreader.ActionCode;
+import org.geometerplus.fbreader.fbreader.FBReaderApp;
+import org.geometerplus.fbreader.bookmodel.BookModel;
+import org.geometerplus.fbreader.library.Book;
+
+import org.geometerplus.android.fbreader.library.KillerCallback;
+
+import org.geometerplus.android.util.UIUtil;
+
+import org.geometerplus.android.fbreader.tips.ShowTipAction;
+import org.geometerplus.android.fbreader.tips.TipsService;
 
 public final class FBReader extends ZLAndroidActivity {
 	public static final String BOOK_PATH_KEY = "BookPath";
