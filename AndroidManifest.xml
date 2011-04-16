@@ -156,5 +156,6 @@
 		<receiver android:name="org.geometerplus.android.fbreader.network.BookDownloaderCallback" android:process=":networkLibrary" />
 		<service android:name="org.geometerplus.android.fbreader.network.LibraryInitializationService" android:process=":networkLibrary" />
 		<service android:name="org.geometerplus.android.fbreader.tips.TipsService"/>
+		<service android:name="org.geometerplus.android.fbreader.tips.TipsDownloadService" android:process=":tips"/>
 	</application>
 </manifest>

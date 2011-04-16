@@ -82,6 +82,10 @@ public final class ZLPhysicalFile extends ZLFile {
 	public InputStream getInputStream() throws IOException {
 		return new FileInputStream(myFile);
 	}
+	
+	public void mkdir(){
+		myFile.mkdir();
+	}
 
 	protected List<ZLFile> directoryEntries() {
 		File[] subFiles = myFile.listFiles();
