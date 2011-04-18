@@ -26,14 +26,14 @@ public class TipsUtil {
 	}
 	
 	public static boolean isOnline(Context c) {
-		ConnectivityManager cm = (ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo nInfo = cm.getActiveNetworkInfo();
-		if (nInfo != null && nInfo.isConnected()) {
-		return true;
-		}
-		else {
-		return false;
-		}
+	    ConnectivityManager cm = (ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo nInfo = cm.getActiveNetworkInfo();
+	    if (nInfo != null && nInfo.isConnected()) {
+	        return true;
+	    }
+	    else {
+	        return false;
+	    }
 	}
 
 }

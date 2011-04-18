@@ -47,7 +47,7 @@ public class TipsService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Log.v(TIPS_LOG, "TipsService - onCreate");
+//		Log.v(TIPS_LOG, "TipsService - onCreate");
 		ZLFile.createFileByPath(Paths.networkCacheDirectory()+"/tips").getPhysicalFile().mkdir();
 
 	}
@@ -55,7 +55,7 @@ public class TipsService extends Service {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		Log.v(TIPS_LOG, "TipsService - onStart");
+//		Log.v(TIPS_LOG, "TipsService - onStart");
 		
 		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips0001.xml";	
 
@@ -91,7 +91,7 @@ public class TipsService extends Service {
 		String currFile = fileOpt.getValue();
 		String currId = idOpt.getValue();
 
-		Log.v(TIPS_LOG, currFile + "  " + currId);
+//		Log.v(TIPS_LOG, currFile + "  " + currId);
 		if (TipsUtil.getIntId(currId) >= 2){
 			ZLFile.createFileByPath(currFile).getPhysicalFile().delete(); // attention
 			

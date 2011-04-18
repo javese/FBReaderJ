@@ -25,7 +25,6 @@ import org.geometerplus.fbreader.Paths;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.network.ZLNetworkException;
 import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
-import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 import android.app.Service;
 import android.content.Intent;
@@ -41,70 +40,54 @@ public class TipsDownloadService extends Service  {
 	public void onCreate() {
 		super.onCreate();
 		ZLFile.createFileByPath(Paths.networkCacheDirectory()+"/tips").getPhysicalFile().mkdir();
+		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips.xml";
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		Log.v(TipsService.TIPS_LOG, "TipsDownloadService - onStart " );
 		
-		String path = Paths.networkCacheDirectory()+"/tips";
-		ZLFile tipsDir = ZLFile.createFileByPath(path);
-		
-		int numFiles = tipsDir.children().size();
-		if (numFiles < 5){
-			boolean isContinue = true;
-			while (isContinue){
-				if (TipsUtil.isOnline(this)){
-					downloadTips(numFiles);
-					return; 
-				} else {
-					try {
-						long delay = 10*60*1000;
-						Thread.sleep(delay);
-					} catch (InterruptedException e) {
-						isContinue = false;
+		ZLFile tipsFile = ZLFile.createFileByPath(TIPS_PATH);
+		if (!tipsFile.exists()){
+			Log.v(TipsService.TIPS_LOG, "TipsDownloadService - !tipsFile.exists()" );
+
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					boolean isContinue = true;
+					while (isContinue){
+						if (TipsUtil.isOnline(TipsDownloadService.this)){
+							downloadTips();
+							isContinue = false;
+						} else {
+							long delay = 5 * 60 * 1000; 	// 5 min
+							try {
+								Thread.sleep(delay);
+							} catch (InterruptedException e) {
+								Log.v(TipsService.TIPS_LOG, "TipsDownloadService exception :" + e.getMessage());
+								isContinue = false;
+							}
+						}
 					}
 				}
-			}
+			};
+			
+			new Thread(r).start();
 		}
-		
-//		 TODO DownloadTipsService
-//		try {
-//			File outFile = new File(TIPS_PATH);
-//			ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
-//			Log.v(TIPS_LOG, "download done");
-//		} catch (ZLNetworkException e) {
-//			Log.v(TIPS_LOG, "exception: " + e.getMessage());
-//		}
-
 	}
 
-	private void downloadTips(int numFiles){
-		// TODO
-		ZLStringOption fileOpt = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_FILE, TIPS_PATH);
-		String newFile = fileOpt.getValue();
-		
-		for (int i = 0; i < numFiles; i++){
-			newFile = TipsUtil.netxFile(newFile);
+	private void downloadTips(){
+		try {
+			File outFile = new File(TIPS_PATH);
+			ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
+			Log.v(TipsService.TIPS_LOG, "download done");
+		} catch (ZLNetworkException e) {
+			Log.v(TipsService.TIPS_LOG, "download exception: " + e.getMessage());
 		}
-		for (int i = 0; i < 5 - numFiles; i++){
-			try {
-				File outFile = new File(newFile);
-				ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
-				newFile = TipsUtil.netxFile(newFile);
-			} catch (ZLNetworkException e) {
-				Log.v(TipsService.TIPS_LOG, "exp : " + e.getMessage());
-			}
-		}
-		
 	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
-	
-
 }

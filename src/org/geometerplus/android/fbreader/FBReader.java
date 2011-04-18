@@ -185,7 +185,7 @@ public final class FBReader extends ZLAndroidActivity {
 		
 		// TODO delete later
 		startService(new Intent(getApplicationContext(), TipsService.class));
-		//startService(new Intent(getApplicationContext(), TipsDownloadService.class));
+		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
 	}
 	
 	@Override
