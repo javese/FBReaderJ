@@ -64,7 +64,7 @@ public class TipsDialog {
 	}
 
 	private void donShowAction(){
-		// TODO
+		TipsUtil.getShowOption().setValue(false);
 	}
 	
 	public void show(){

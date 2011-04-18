@@ -29,7 +29,6 @@ import org.geometerplus.fbreader.network.opds.OPDSFeedReader;
 import org.geometerplus.fbreader.network.opds.OPDSXMLReader;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.filesystem.ZLResourceFile;
-import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 
 import android.app.Activity;
@@ -46,7 +45,7 @@ public class TipsHelper {
 
 	public void showTip(){
 		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips.xml";	
-		boolean isShowTips = new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true).getValue();
+		boolean isShowTips = TipsUtil.getShowOption().getValue();
 		if (isShowTips){
 			int currDate = new Date().getDate();
 			int lastDate = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, currDate).getValue();
@@ -58,13 +57,14 @@ public class TipsHelper {
 		}
 	}
 	
+	private final int maxCountTips = 10;
 	private void tryShowTip(){
 		int currId = -1;
 		ZLFile tipsFile = ZLFile.createFileByPath(TIPS_PATH);
 		if (tipsFile.exists()){
 			ZLIntegerOption idOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, 0);
 			currId = idOpt.getValue();
-			if (currId >= 3){
+			if (currId >= maxCountTips){
 				idOpt.setValue(0);
 				tipsFile.getPhysicalFile().delete();
 				
@@ -99,12 +99,7 @@ public class TipsHelper {
 		public boolean processFeedEntry(OPDSEntry entry) {
 			if (myCount == myTipId){
 				Tip tip = new Tip(entry);
-//				State.putToState(TIPS_STATE_KEY, tip);
-//				final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
-//				fbReader.doAction(ActionCode.SHOW_TIP);
-				
 				new TipsDialog(myActivity, tip).show();
-				
 				return true;
 			}
 			myCount++;

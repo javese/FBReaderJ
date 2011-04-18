@@ -22,6 +22,7 @@ package org.geometerplus.android.fbreader.preferences;
 import android.content.Intent;
 
 import org.geometerplus.zlibrary.core.application.ZLKeyBindings;
+import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerRangeOption;
 
@@ -30,6 +31,8 @@ import org.geometerplus.zlibrary.text.view.style.*;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 
+import org.geometerplus.android.fbreader.tips.TipsKeys;
+import org.geometerplus.android.fbreader.tips.TipsUtil;
 import org.geometerplus.fbreader.fbreader.*;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.bookmodel.FBTextKind;
@@ -400,6 +403,13 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		cancelMenuScreen.addPreference(new ZLStringChoicePreference(
 			this, cancelMenuScreen.Resource, "backKeyLongPressAction",
 			bindings.getOption("<Back>", true), backKeyLongPressActions
+		));
+		
+		
+		final Screen tipsScreen = createPreferenceScreen("tips");
+		tipsScreen.addPreference(new ZLBooleanPreference(
+			this, TipsUtil.getShowOption(), tipsScreen.Resource,
+			"showTips"
 		));
 	}
 }

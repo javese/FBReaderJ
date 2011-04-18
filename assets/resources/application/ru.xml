@@ -554,6 +554,13 @@
 					<node name="none" value="Ничего не делать"/>
 				</node>
 			</node>
+			<node name="tips" value="Подсказки">
+				<node name="summary" value="Подсказки"/>
+				<node name="showTips" value="Показывать подсказки">
+					<node name="summaryOn" value="Показывать подсказки"/>
+					<node name="summaryOff" value="Не показывать подсказки"/>
+				</node>				
+			</node>
 		</node>
 		<node name="OptionsDialog">
 			<node name="tab">

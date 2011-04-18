@@ -1,12 +1,15 @@
 package org.geometerplus.android.fbreader.tips;
 
+import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class TipsUtil {
 
-	// id format example - "fbreader-ru-hint-0001"
+/*	
+ 	// id format example - "fbreader-ru-hint-0001"
 	public static String nextId(String id){
 		int val = Integer.parseInt(id.substring(id.length() - 4));
 		val++;
@@ -23,6 +26,11 @@ public class TipsUtil {
 	public static int getIntId(String id){
 		int result = Integer.parseInt(id.substring(id.length() - 4));
 		return result;
+	}
+*/	
+	
+	public static ZLBooleanOption getShowOption(){
+		return new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true);
 	}
 	
 	public static boolean isOnline(Context c) {

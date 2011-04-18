@@ -568,6 +568,13 @@
 					<node name="none" value="No action"/>
 				</node>
 			</node>
+			<node name="tips" value="Tips">
+				<node name="summary" value="Show tips"/>
+				<node name="showTips" value="Show tips">
+					<node name="summaryOn" value="Show tips"/>
+					<node name="summaryOff" value="Do not show tips"/>
+				</node>				
+			</node>
 		</node>
 		<node name="OptionsDialog">
 			<node name="tab">
