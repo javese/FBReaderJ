@@ -20,6 +20,7 @@
 package org.geometerplus.android.fbreader.tips;
 
 import java.util.Date;
+import java.util.Random;
 
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.fbreader.ActionCode;
@@ -29,9 +30,9 @@ import org.geometerplus.fbreader.network.opds.OPDSFeedMetadata;
 import org.geometerplus.fbreader.network.opds.OPDSFeedReader;
 import org.geometerplus.fbreader.network.opds.OPDSXMLReader;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.filesystem.ZLResourceFile;
 import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
-import org.geometerplus.zlibrary.core.options.ZLStringOption;
 
 import android.app.Service;
 import android.content.Intent;
@@ -47,26 +48,24 @@ public class TipsService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		Log.v(TIPS_LOG, "TipsService - onCreate");
+		Log.v(TIPS_LOG, "TipsService - onCreate");
 		ZLFile.createFileByPath(Paths.networkCacheDirectory()+"/tips").getPhysicalFile().mkdir();
-
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-//		Log.v(TIPS_LOG, "TipsService - onStart");
-		
-		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips0001.xml";	
+		Log.v(TIPS_LOG, "TipsService - onStart");
+		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips.xml";	
 
 		boolean isShowTips = new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true).getValue();
 		if (isShowTips){
 			int currDate = new Date().getDate();
 			int lastDate = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, currDate).getValue();
 
-			// FIXME later (lastDate < currDate)
+			//FIXME later (lastDate < currDate)
 			if (lastDate <= currDate){
-				startParser();
+				tryShowTip();
 			}
 		}
 	}
@@ -83,52 +82,48 @@ public class TipsService extends Service {
 		return null;
 	}
 
-	//TODO
-	static String defaultId = "fbreader-ru-hint-0000";
-	private void startParser(){
-		ZLStringOption fileOpt = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_FILE, TIPS_PATH);
-		ZLStringOption idOpt = new ZLStringOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, defaultId);
-		String currFile = fileOpt.getValue();
-		String currId = idOpt.getValue();
-
-//		Log.v(TIPS_LOG, currFile + "  " + currId);
-		if (TipsUtil.getIntId(currId) >= 2){
-			ZLFile.createFileByPath(currFile).getPhysicalFile().delete(); // attention
-			
-			String nextFile = TipsUtil.netxFile(currFile);
-			Log.v(TIPS_LOG, "nextFile: " + nextFile);
-			
-			if (ZLFile.createFileByPath(nextFile).exists()){
-				currFile = nextFile;
-				currId = defaultId;
-				fileOpt.setValue(currFile);				
+	private void tryShowTip(){
+		ZLFile tipsFile = ZLFile.createFileByPath(TIPS_PATH);
+		if (tipsFile.exists()){
+			ZLIntegerOption idOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, 0);
+			int currId = idOpt.getValue();
+			if (currId >= 3){
+				currId = 0;
+				tipsFile.getPhysicalFile().delete();
 			} else {
-				return;
+				currId++;
+				new OPDSXMLReader(new TipsODPSFeedReader(currId)).read(tipsFile);
 			}
+			idOpt.setValue(currId);
+		} else {
+			Random random = new Random();
+			int randId = 1 + random.nextInt(10);
+			tipsFile = getDefaultTipsFile();
+			new OPDSXMLReader(new TipsODPSFeedReader(randId)).read(getDefaultTipsFile());
 		}
-
-		// run parser
-		String nextTipId = TipsUtil.nextId(currId);
-		ZLFile file = ZLFile.createFileByPath(currFile);
-		new OPDSXMLReader(new TipsODPSFeedReader(nextTipId)).read(file);
-		idOpt.setValue(nextTipId);
+	}
+	
+	private ZLFile getDefaultTipsFile(){
+		return ZLResourceFile.createResourceFile("tips/tips.xml");		
 	}
 
 	private class TipsODPSFeedReader implements OPDSFeedReader{
-		String myTipId;
-		TipsODPSFeedReader(String tipId){
+		int myTipId;
+		TipsODPSFeedReader(int tipId){
 			myTipId = tipId;
 		}
 
+		int myCount = 1;
 		@Override
 		public boolean processFeedEntry(OPDSEntry entry) {
-			Tip tip = new Tip(entry);
-			if (tip.getId().equals(myTipId)){
+			if (myCount == myTipId){
+				Tip tip = new Tip(entry);
 				State.putToState(TIPS_STATE_KEY, tip);
 				final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
 				fbReader.doAction(ActionCode.SHOW_TIP);
 				return true;
 			}
+			myCount++;
 			return false;
 		}
 
