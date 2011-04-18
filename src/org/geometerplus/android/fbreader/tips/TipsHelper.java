@@ -36,14 +36,11 @@ import android.app.Activity;
 import android.util.Log;
 
 public class TipsHelper {
-	public static final String TIPS_LOG = "tips";
-	public static final String TIPS_STATE_KEY = "tips_state_key";
 	private static String TIPS_PATH;
-	
 	private Activity myActivity;
 	
 	public TipsHelper(Activity activity){
-		Log.v(TIPS_LOG, "TipsHelper was created");
+		Log.v(TipsKeys.TIPS_LOG, "TipsHelper was created");
 		myActivity = activity;
 	}
 

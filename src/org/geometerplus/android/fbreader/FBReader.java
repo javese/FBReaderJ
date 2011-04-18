@@ -46,10 +46,8 @@ import org.geometerplus.android.fbreader.library.KillerCallback;
 
 import org.geometerplus.android.util.UIUtil;
 
-import org.geometerplus.android.fbreader.tips.ShowTipAction;
 import org.geometerplus.android.fbreader.tips.TipsDownloadService;
 import org.geometerplus.android.fbreader.tips.TipsHelper;
-import org.geometerplus.android.fbreader.tips.TipsService;
 
 public final class FBReader extends ZLAndroidActivity {
 	public static final String BOOK_PATH_KEY = "BookPath";
@@ -106,8 +104,6 @@ public final class FBReader extends ZLAndroidActivity {
 		fbReader.addAction(ActionCode.PROCESS_HYPERLINK, new ProcessHyperlinkAction(this, fbReader));
 
 		fbReader.addAction(ActionCode.SHOW_CANCEL_MENU, new ShowCancelMenuAction(this, fbReader));
-
-		fbReader.addAction(ActionCode.SHOW_TIP, new ShowTipAction(this, fbReader));
 	}
 
  	@Override
@@ -185,7 +181,6 @@ public final class FBReader extends ZLAndroidActivity {
 		}
 		
 		// TODO delete later
-		//startService(new Intent(getApplicationContext(), TipsService.class));
 		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
 		new TipsHelper(this).showTip();
 	}
