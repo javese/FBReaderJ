@@ -20,7 +20,7 @@
 package org.geometerplus.android.fbreader.tips;
 
 import org.geometerplus.android.fbreader.FBReader;
-import org.geometerplus.android.fbreader.tips.TipsService.Tip;
+import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
 import org.geometerplus.fbreader.fbreader.FBAction;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 

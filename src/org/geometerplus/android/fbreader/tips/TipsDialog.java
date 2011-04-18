@@ -19,7 +19,7 @@
 
 package org.geometerplus.android.fbreader.tips;
 
-import org.geometerplus.android.fbreader.tips.TipsService.Tip;
+import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.ui.android.R;
 

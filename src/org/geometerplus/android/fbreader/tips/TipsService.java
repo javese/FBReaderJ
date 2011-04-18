@@ -65,7 +65,7 @@ public class TipsService extends Service {
 
 			//FIXME later (lastDate < currDate)
 			if (lastDate <= currDate){
-				tryShowTip();
+//				tryShowTip();
 			}
 		}
 	}
@@ -82,85 +82,6 @@ public class TipsService extends Service {
 		return null;
 	}
 
-	private void tryShowTip(){
-		ZLFile tipsFile = ZLFile.createFileByPath(TIPS_PATH);
-		if (tipsFile.exists()){
-			ZLIntegerOption idOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, 0);
-			int currId = idOpt.getValue();
-			if (currId >= 3){
-				currId = 0;
-				tipsFile.getPhysicalFile().delete();
-			} else {
-				currId++;
-				new OPDSXMLReader(new TipsODPSFeedReader(currId)).read(tipsFile);
-			}
-			idOpt.setValue(currId);
-		} else {
-			Random random = new Random();
-			int randId = 1 + random.nextInt(10);
-			tipsFile = getDefaultTipsFile();
-			new OPDSXMLReader(new TipsODPSFeedReader(randId)).read(getDefaultTipsFile());
-		}
-	}
-	
-	private ZLFile getDefaultTipsFile(){
-		return ZLResourceFile.createResourceFile("tips/tips.xml");		
-	}
-
-	private class TipsODPSFeedReader implements OPDSFeedReader{
-		int myTipId;
-		TipsODPSFeedReader(int tipId){
-			myTipId = tipId;
-		}
-
-		int myCount = 1;
-		@Override
-		public boolean processFeedEntry(OPDSEntry entry) {
-			if (myCount == myTipId){
-				Tip tip = new Tip(entry);
-				State.putToState(TIPS_STATE_KEY, tip);
-				final FBReaderApp fbReader = (FBReaderApp)FBReaderApp.Instance();
-				fbReader.doAction(ActionCode.SHOW_TIP);
-				return true;
-			}
-			myCount++;
-			return false;
-		}
-
-		@Override
-		public void processFeedStart() {
-		}
-		
-		@Override
-		public void processFeedEnd() {
-		}
-
-		@Override
-		public boolean processFeedMetadata(OPDSFeedMetadata feed, boolean beforeEntries) {
-			return false;
-		}
-		
-	}
-	
-	public class Tip {
-		private OPDSEntry myEntry;
-		
-		Tip(OPDSEntry entry){
-			myEntry = entry;
-		}
-
-		public String getId(){
-			return myEntry.Id.Uri;
-		}
-
-		public String getTitle(){
-			return myEntry.Title;
-		}
-
-		public String getSummary(){
-			return myEntry.Summary;
-		}
-	}
 	
 	
 }
