@@ -1,57 +1,71 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xml:lang="ru-RU">
-  <id>http://data.fbreader.org/tips/</id>
-  <link type="application/atom+xml" rel="self" href="http://data.fbreader.org/tips/"/>
-  <title>Tips</title>
-  <summary>Tips of the day</summary>
-  <entry>
-	<title>Совет 1</title>
-	<id>fbreader-ru-hint-0001</id>
-	<summary type="html">Совет 1...</summary>
-  </entry>
-  <entry>
-	<title>Совет 2</title>
-	<id>fbreader-ru-hint-0002</id>
-	<summary type="html">Совет 2...</summary>
-  </entry>
-  <entry>
-	<title>Совет 3</title>
-	<id>fbreader-ru-hint-0003</id>
-	<summary type="html">Совет 3...</summary>
-  </entry>
-  <entry>
-	<title>Совет 4</title>
-	<id>fbreader-ru-hint-0004</id>
-	<summary type="html">Совет 4...</summary>
-  </entry>
-  <entry>
-	<title>Совет 5</title>
-	<id>fbreader-ru-hint-0005</id>
-	<summary type="html">Совет 5...</summary>
-  </entry>
-  <entry>
-	<title>Совет 6</title>
-	<id>fbreader-ru-hint-0006</id>
-	<summary type="html">Совет 6...</summary>
-  </entry>
-  <entry>
-	<title>Совет 7</title>
-	<id>fbreader-ru-hint-0007</id>
-	<summary type="html">Совет 7...</summary>
-  </entry>
-  <entry>
-	<title>Совет 8</title>
-	<id>fbreader-ru-hint-0008</id>
-	<summary type="html">Совет 8...</summary>
-  </entry>
-  <entry>
-	<title>Совет 9</title>
-	<id>fbreader-ru-hint-0009</id>
-	<summary type="html">Совет 9...</summary>
-  </entry>
-  <entry>
-	<title>Совет 10</title>
-	<id>fbreader-ru-hint-0010</id>
-	<summary type="html">Совет 10...</summary>
-  </entry>
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="ru" xmlns:app="http://www.w3.org/2007/app" xmlns="http://www.w3.org/2005/Atom">
+	<id>http://data.fbreader.org/tips/tips.xml</id>		
+	<title>Tips</title>
+	<updated>2011-04-19T06:32:30Z</updated>
+ 	<author>
+		<name>FBReader</name>
+		<uri>http://fbreader.org/</uri>
+		<email>ssupport@geometerplus.com</email>
+	</author>
+	<entry>
+		<title>Совет1</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0001</id>		
+		<content type="text">Совет1...</content>
+	</entry>
+	<entry>
+		<title>Совет2</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0002</id>		
+		<content type="text">Совет2...</content>
+	</entry>
+	<entry>
+		<title>Совет3</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0003</id>		
+		<content type="text">Совет3...</content>
+	</entry>
+	<entry>
+		<title>Совет4</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0004</id>		
+		<content type="text">Совет4...</content>
+	</entry>
+	<entry>
+		<title>Совет5</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0005</id>		
+		<content type="text">Совет5...</content>
+	</entry>
+	<entry>
+		<title>Совет6</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0006</id>		
+		<content type="text">Совет6...</content>
+	</entry>
+	<entry>
+		<title>Совет7</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0007</id>		
+		<content type="text">Совет7...</content>
+	</entry>
+	<entry>
+		<title>Совет8</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0008</id>		
+		<content type="text">Совет8...</content>
+	</entry>
+	<entry>
+		<title>Совет9</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0009</id>		
+		<content type="text">Совет9...</content>
+	</entry>
+	<entry>
+		<title>Совет10</title>
+		<updated>2011-04-19T06:32:30Z</updated>
+		<id>http://data.fbreader.org/tips/FBReader-hint-0010</id>		
+		<content type="text">Совет10...</content>
+	</entry>
 </feed>

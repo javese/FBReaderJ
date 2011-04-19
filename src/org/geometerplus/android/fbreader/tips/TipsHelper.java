@@ -121,25 +121,25 @@ public class TipsHelper {
 		
 	}
 	
-	public class Tip {
+	public class Tip implements ITip {
 		private OPDSEntry myEntry;
 		
 		Tip(OPDSEntry entry){
 			myEntry = entry;
 		}
 
-		public String getId(){
-			return myEntry.Id.Uri;
-		}
-
-		public String getTitle(){
+		public String getTipTitle(){
 			return myEntry.Title;
 		}
-
-		public String getSummary(){
-			return myEntry.Summary;
+		
+		public String getTipContext(){
+			return myEntry.Content;
 		}
 	}
-
+	
+	public interface ITip{
+		String getTipTitle();
+		String getTipContext();
+	}
 	
 }

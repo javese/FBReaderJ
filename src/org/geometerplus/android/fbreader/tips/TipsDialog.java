@@ -19,7 +19,7 @@
 
 package org.geometerplus.android.fbreader.tips;
 
-import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
+import org.geometerplus.android.fbreader.tips.TipsHelper.ITip;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.ui.android.R;
 
@@ -34,8 +34,8 @@ public class TipsDialog {
 	
 	private AlertDialog myDialog;
 
-	public TipsDialog(Activity activity, Tip tip){
-		this(activity, tip.getTitle(), tip.getSummary());
+	public TipsDialog(Activity activity, ITip tip){
+		this(activity, tip.getTipTitle(), tip.getTipContext());
 	}
 	
 	public TipsDialog(final Activity activity, String title, String mess) {
