@@ -48,10 +48,12 @@ public class TipsHelper {
 		boolean isShowTips = TipsUtil.getShowOption().getValue();
 		if (isShowTips){
 			int currDate = new Date().getDate();
-			int lastDate = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, currDate).getValue();
+			ZLIntegerOption dateOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
+			int lastDate = dateOpt.getValue();
 
-			//FIXME later (lastDate < currDate)
-			if (lastDate <= currDate){
+			//if (lastDate != currDate) uncomment later
+			if (lastDate != currDate || true){ 	// for testing
+				dateOpt.setValue(currDate);
 				tryShowTip();
 			}
 		}
