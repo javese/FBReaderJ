@@ -180,7 +180,6 @@ public final class FBReader extends ZLAndroidActivity {
 			ourNavigatePanel.createControlPanel(this, root);
 		}
 		
-		// TODO delete later
 		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
 		new TipsHelper(this).showTip();
 	}

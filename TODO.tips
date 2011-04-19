@@ -1,3 +1,3 @@
-*	tips.xml - валидный
+DONE	tips.xml - валидный
 * 	от xml-парсера - отнаследовать AtomParser, от AtomParser'a => TipsParser
 * 	от AtomParser'a => OPDSParser

@@ -49,7 +49,6 @@ public class OPDSXMLReader extends ZLXMLReaderAdapter {
 	//private ATOMTitle myTitle;      // TODO: implement ATOMTextConstruct & ATOMTitle
 	//private ATOMSummary mySummary;  // TODO: implement ATOMTextConstruct & ATOMSummary
 
-
 	public OPDSXMLReader(OPDSFeedReader feedReader) {
 		myFeedReader = feedReader;
 	}
