@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class TipsDialog {
@@ -73,10 +74,12 @@ public class TipsDialog {
 					}
 				}
 			)
-			.setNeutralButton("next", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					new TipsHelper(activity).showTip();
-				}
+			.setNeutralButton(
+				dialogResource.getResource("button").getResource("next").getValue(),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						new TipsHelper(activity).showTip();
+					}
 			})
 			.create();
 	}
