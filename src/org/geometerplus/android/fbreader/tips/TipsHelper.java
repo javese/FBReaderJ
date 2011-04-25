@@ -23,6 +23,10 @@ import java.util.Date;
 import java.util.Random;
 
 import org.geometerplus.fbreader.Paths;
+import org.geometerplus.fbreader.network.atom.ATOMEntry;
+import org.geometerplus.fbreader.network.atom.ATOMFeedMetadata;
+import org.geometerplus.fbreader.network.atom.ATOMFeedReader;
+import org.geometerplus.fbreader.network.atom.ATOMXMLReader;
 import org.geometerplus.fbreader.network.opds.OPDSEntry;
 import org.geometerplus.fbreader.network.opds.OPDSFeedMetadata;
 import org.geometerplus.fbreader.network.opds.OPDSFeedReader;
@@ -67,7 +71,6 @@ public class TipsHelper {
 		}
 	}
 	
-	
 	private final int maxCountTips = 10;
 	private void tryShowTip(){
 		int currId = -1;
@@ -92,22 +95,22 @@ public class TipsHelper {
 			tipsFile = getDefaultTipsFile();
 		}
 		
-		new OPDSXMLReader(new TipsODPSFeedReader(currId)).read(tipsFile);
+		new ATOMXMLReader(new TipsATOMFeedReader(currId)).read(tipsFile);
 	}
 	
 	private ZLFile getDefaultTipsFile(){
 		return ZLResourceFile.createResourceFile("tips/tips.xml");		
 	}
 
-	private class TipsODPSFeedReader implements OPDSFeedReader{
+	private class TipsATOMFeedReader implements ATOMFeedReader{
 		int myTipId;
-		TipsODPSFeedReader(int tipId){
+		TipsATOMFeedReader(int tipId){
 			myTipId = tipId;
 		}
 
 		int myCount = 1;
 		@Override
-		public boolean processFeedEntry(OPDSEntry entry) {
+		public boolean processFeedEntry(ATOMEntry entry) {
 			if (myCount == myTipId){
 				Tip tip = new Tip(entry);
 				myTipFeedListener.tipFound(tip);
@@ -126,16 +129,16 @@ public class TipsHelper {
 		}
 
 		@Override
-		public boolean processFeedMetadata(OPDSFeedMetadata feed, boolean beforeEntries) {
+		public boolean processFeedMetadata(ATOMFeedMetadata feed, boolean beforeEntries) {
 			return false;
 		}
 		
 	}
 	
 	public class Tip implements ITip {
-		private OPDSEntry myEntry;
+		private ATOMEntry myEntry;
 		
-		Tip(OPDSEntry entry){
+		Tip(ATOMEntry entry){
 			myEntry = entry;
 		}
 

@@ -1,3 +1,6 @@
 DONE	tips.xml - валидный
+DONE 	сслыки в тексте
+* 	кнопка next
+* 	контроль 250 символов
 * 	от xml-парсера - отнаследовать AtomParser, от AtomParser'a => TipsParser
 * 	от AtomParser'a => OPDSParser
