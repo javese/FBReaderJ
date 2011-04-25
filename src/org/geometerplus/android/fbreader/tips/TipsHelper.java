@@ -31,16 +31,15 @@ import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.filesystem.ZLResourceFile;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 
-import android.app.Activity;
 import android.util.Log;
 
 public class TipsHelper {
 	private static String TIPS_PATH;
-	private Activity myActivity;
+	private ITipFeedListener myTipFeedListener;
 	
-	public TipsHelper(Activity activity){
+	public TipsHelper(ITipFeedListener tipFeedListener){
 		Log.v(TipsKeys.TIPS_LOG, "TipsHelper was created");
-		myActivity = activity;
+		myTipFeedListener = tipFeedListener;
 		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips.xml";	
 	}
 
@@ -111,7 +110,7 @@ public class TipsHelper {
 		public boolean processFeedEntry(OPDSEntry entry) {
 			if (myCount == myTipId){
 				Tip tip = new Tip(entry);
-				new TipsDialog(myActivity, tip).show();
+				myTipFeedListener.tipFound(tip);
 				return true;
 			}
 			myCount++;
@@ -154,4 +153,7 @@ public class TipsHelper {
 		String getTipContext();
 	}
 	
+	public interface ITipFeedListener{
+		void tipFound(Tip tip);
+	}
 }

@@ -20,15 +20,13 @@
 package org.geometerplus.android.fbreader.tips;
 
 
-import org.geometerplus.android.fbreader.tips.TipsHelper.ITip;
+import org.geometerplus.android.fbreader.tips.TipsHelper.ITipFeedListener;
+import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.ui.android.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -36,60 +34,68 @@ import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
 import android.text.style.URLSpan;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class TipsDialog {
-	private AlertDialog myDialog;
-
-	public TipsDialog(Activity activity, ITip tip){
-		this(activity, tip.getTipTitle(), tip.getTipContext());
-	}
+	private AlertDialog myDialog;	
+	ITipFeedListener myTipFeedListener;
 	
-	public TipsDialog(final Activity activity, String title, String mess) {
+	public TipsDialog(final Activity activity){
+		final View view = activity.getLayoutInflater().inflate(R.layout.tip_dialog, null, false);
+
 		final ZLResource dialogResource = ZLResource.resource("dialog");	
-		final View view = activity.getLayoutInflater().inflate(R.layout.plugin_dialog, null, false);
-		
-		TextView textView = ((TextView)view.findViewById(R.id.plugin_dialog_text));
-		textView.setText((mess));
-		parseTextViewCotext(textView);
-		
+		final TextView textView = ((TextView)view.findViewById(R.id.plugin_dialog_text));
 		final CheckBox checkBox = (CheckBox)view.findViewById(R.id.plugin_dialog_checkbox);
 		checkBox.setText(dialogResource.getResource("tips").getResource("dontShowAgain").getValue());
-		
+
+		Button btnOk = (Button)view.findViewById(R.id.button_ok);
+		btnOk.setText(dialogResource.getResource("button").getResource("ok").getValue());
+		btnOk.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(checkBox.isChecked()){
+					dontShowAction();
+				}
+				myDialog.dismiss();
+			}
+		});
+
+		Button btnNext = (Button)view.findViewById(R.id.button_next);
+		btnNext.setText(dialogResource.getResource("button").getResource("next").getValue());
+		btnNext.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new TipsHelper(myTipFeedListener).showTipForce();
+			}
+		});
+
 		myDialog = new AlertDialog.Builder(activity)
-			.setTitle(title)
 			.setView(view)
 			.setIcon(0)
-			.setPositiveButton(
-				dialogResource.getResource("button").getResource("ok").getValue(),
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						if(checkBox.isChecked()){
-							dontShowAction();
-						}
-					}
-				}
-			)
-			.setNeutralButton(
-				dialogResource.getResource("button").getResource("next").getValue(),
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						new TipsHelper(activity).showTip();
-					}
-			})
 			.create();
+		
+		myTipFeedListener = new ITipFeedListener() {
+			@Override
+			public void tipFound(Tip tip) {
+				textView.setText((tip.getTipContext()));
+				parseTextViewCotext(textView);
+				myDialog.setTitle(tip.getTipTitle());
+				myDialog.show();
+			}
+		};
 	}
-
+	
+			
 	private void dontShowAction(){
 		TipsUtil.getShowOption().setValue(false);
 	}
 	
 	public void show(){
-		myDialog.show();
+//		myDialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+//	    myDialog.show();
+		new TipsHelper(myTipFeedListener).showTip();
 	}
 	
 	private void parseTextViewCotext(TextView view) {
@@ -123,8 +129,8 @@ public class TipsDialog {
 	
 	private boolean isLink(String str){
 			return str.contains("://") ||  str.matches("(?s)^[a-zA-Z][a-zA-Z0-9+-.]*:.*$"); 
-	}
-
+	}	
+	
 }
 
 
