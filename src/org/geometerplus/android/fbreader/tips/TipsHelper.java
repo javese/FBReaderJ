@@ -41,23 +41,33 @@ public class TipsHelper {
 	public TipsHelper(Activity activity){
 		Log.v(TipsKeys.TIPS_LOG, "TipsHelper was created");
 		myActivity = activity;
+		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips.xml";	
 	}
 
 	public void showTip(){
-		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips.xml";	
 		boolean isShowTips = TipsUtil.getShowOption().getValue();
 		if (isShowTips){
 			int currDate = new Date().getDate();
 			ZLIntegerOption dateOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
 			int lastDate = dateOpt.getValue();
 
-			//if (lastDate != currDate) uncomment later
+			//if (lastDate != currDate) 		//uncomment later
 			if (lastDate != currDate || true){ 	// for testing
 				dateOpt.setValue(currDate);
 				tryShowTip();
 			}
 		}
 	}
+	
+	public void showTipForce(){
+		boolean isShowTips = TipsUtil.getShowOption().getValue();
+		if (isShowTips){
+			ZLIntegerOption dateOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
+			dateOpt.setValue(new Date().getDate());
+			tryShowTip();
+		}
+	}
+	
 	
 	private final int maxCountTips = 10;
 	private void tryShowTip(){

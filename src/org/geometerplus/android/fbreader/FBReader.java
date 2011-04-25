@@ -181,7 +181,7 @@ public final class FBReader extends ZLAndroidActivity {
 		}
 		
 		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
-		new TipsHelper(this).showTip();
+		new TipsHelper(this).showTipForce();
 	}
 	
 	@Override

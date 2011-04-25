@@ -26,7 +26,9 @@ import org.geometerplus.zlibrary.ui.android.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -34,7 +36,9 @@ import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
 import android.text.style.URLSpan;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class TipsDialog {
@@ -47,6 +51,7 @@ public class TipsDialog {
 	public TipsDialog(final Activity activity, String title, String mess) {
 		final ZLResource dialogResource = ZLResource.resource("dialog");	
 		final View view = activity.getLayoutInflater().inflate(R.layout.plugin_dialog, null, false);
+		
 		TextView textView = ((TextView)view.findViewById(R.id.plugin_dialog_text));
 		textView.setText((mess));
 		parseTextViewCotext(textView);
@@ -63,15 +68,20 @@ public class TipsDialog {
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						if(checkBox.isChecked()){
-							donShowAction();
+							dontShowAction();
 						}
 					}
 				}
 			)
+			.setNeutralButton("next", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					new TipsHelper(activity).showTip();
+				}
+			})
 			.create();
 	}
 
-	private void donShowAction(){
+	private void dontShowAction(){
 		TipsUtil.getShowOption().setValue(false);
 	}
 	
