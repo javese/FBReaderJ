@@ -53,7 +53,6 @@ public class OPDSXMLReader extends ZLXMLReaderAdapter {
 		myFeedReader = feedReader;
 	}
 
-
 	protected String myDublinCoreNamespaceId;
 	protected String myAtomNamespaceId;
 	protected String myOpenSearchNamespaceId;
