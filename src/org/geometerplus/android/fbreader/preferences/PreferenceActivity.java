@@ -31,7 +31,6 @@ import org.geometerplus.zlibrary.text.view.style.*;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 
-import org.geometerplus.android.fbreader.tips.TipsKeys;
 import org.geometerplus.android.fbreader.tips.TipsUtil;
 import org.geometerplus.fbreader.fbreader.*;
 import org.geometerplus.fbreader.Paths;
