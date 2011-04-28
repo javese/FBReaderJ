@@ -19,6 +19,7 @@
 
 package org.geometerplus.fbreader.network.opds;
 
+
 public interface OPDSFeedReader {
 
 	void processFeedStart();
