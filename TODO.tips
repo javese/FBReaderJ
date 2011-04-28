@@ -1,6 +1,7 @@
 DONE	tips.xml - валидный
 DONE 	сслыки в тексте
-* 	кнопка next
+DONE 	кнопка next
 * 	контроль 250 символов
-* 	от xml-парсера - отнаследовать AtomParser, от AtomParser'a => TipsParser
-* 	от AtomParser'a => OPDSParser
+DONE 	от xml-парсера - отнаследовать AtomParser
+DONE 	от AtomParser'a => OPDSParser
+*	(со временем) механизм, позволяющий по "сслыке" открывать определенные вью FBReaderJ

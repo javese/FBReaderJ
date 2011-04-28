@@ -512,8 +512,6 @@ public class ATOMXMLReader extends ZLXMLReaderAdapter {
 
 		return interruptReading;
 	}
-	
-	
 
 	@Override
 	public final void characterDataHandler(char[] data, int start, int length) {
