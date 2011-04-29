@@ -97,7 +97,7 @@ public class OPDSXMLReader extends ATOMXMLReader {
 	public boolean startElementHandler(final String ns, final String tag,
 			final ZLStringMap attributes, final String bufferContent) {
 		final int state = myState;
-		boolean interruptReading = super.startElementHandler(ns, tag, attributes, bufferContent);
+		final boolean interruptReading = super.startElementHandler(ns, tag, attributes, bufferContent);
 		switch (state) {
 			case FEED:
 				if (ns == XMLNamespaces.OpenSearch) {
