@@ -25,7 +25,7 @@ import java.util.Random;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.network.atom.ATOMEntry;
 import org.geometerplus.fbreader.network.atom.ATOMFeedMetadata;
-import org.geometerplus.fbreader.network.atom.ATOMFeedReader;
+import org.geometerplus.fbreader.network.atom.ATOMFeedHandler;
 import org.geometerplus.fbreader.network.atom.ATOMXMLReader;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.filesystem.ZLResourceFile;
@@ -37,30 +37,30 @@ public class TipsHelper {
 	private static String TIPS_PATH;
 	private ITipFeedListener myTipFeedListener;
 	
-	public TipsHelper(ITipFeedListener tipFeedListener){
+	public TipsHelper(ITipFeedListener tipFeedListener) {
 		Log.v(TipsKeys.TIPS_LOG, "TipsHelper was created");
 		myTipFeedListener = tipFeedListener;
 		TIPS_PATH = Paths.networkCacheDirectory()+"/tips/tips.xml";	
 	}
 
-	public void showTip(){
+	public void showTip() {
 		boolean isShowTips = TipsUtil.getShowOption().getValue();
-		if (isShowTips){
+		if (isShowTips) {
 			int currDate = new Date().getDate();
 			ZLIntegerOption dateOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
 			int lastDate = dateOpt.getValue();
 
 			//if (lastDate != currDate) 		//uncomment later
-			if (lastDate != currDate || true){ 	// for testing
+			if (lastDate != currDate || true) { 	// for testing
 				dateOpt.setValue(currDate);
 				tryShowTip();
 			}
 		}
 	}
 	
-	public void showTipForce(){
+	public void showTipForce() {
 		boolean isShowTips = TipsUtil.getShowOption().getValue();
-		if (isShowTips){
+		if (isShowTips) {
 			ZLIntegerOption dateOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
 			dateOpt.setValue(new Date().getDate());
 			tryShowTip();
@@ -68,13 +68,13 @@ public class TipsHelper {
 	}
 	
 	private final int maxCountTips = 10;
-	private void tryShowTip(){
+	private void tryShowTip() {
 		int currId = -1;
 		ZLFile tipsFile = ZLFile.createFileByPath(TIPS_PATH);
-		if (tipsFile.exists()){
+		if (tipsFile.exists()) {
 			ZLIntegerOption idOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.CURR_TIP_ID, 0);
 			currId = idOpt.getValue();
-			if (currId >= maxCountTips){
+			if (currId >= maxCountTips) {
 				idOpt.setValue(0);
 				tipsFile.getPhysicalFile().delete();
 				
@@ -91,23 +91,23 @@ public class TipsHelper {
 			tipsFile = getDefaultTipsFile();
 		}
 		
-		new ATOMXMLReader(new TipsATOMFeedReader(currId)).read(tipsFile);
+		new ATOMXMLReader(new TipsATOMFeedHandler(currId)).read(tipsFile);
 	}
 	
-	private ZLFile getDefaultTipsFile(){
+	private ZLFile getDefaultTipsFile() {
 		return ZLResourceFile.createResourceFile("tips/tips.xml");		
 	}
 
-	private class TipsATOMFeedReader implements ATOMFeedReader{
+	private class TipsATOMFeedHandler implements ATOMFeedHandler {
 		int myTipId;
-		TipsATOMFeedReader(int tipId){
+		TipsATOMFeedHandler(int tipId) {
 			myTipId = tipId;
 		}
 
 		int myCount = 1;
 		@Override
 		public boolean processFeedEntry(ATOMEntry entry) {
-			if (myCount == myTipId){
+			if (myCount == myTipId) {
 				Tip tip = new Tip(entry);
 				myTipFeedListener.tipFound(tip);
 				return true;
@@ -134,25 +134,25 @@ public class TipsHelper {
 	public class Tip implements ITip {
 		private ATOMEntry myEntry;
 		
-		Tip(ATOMEntry entry){
+		Tip(ATOMEntry entry) {
 			myEntry = entry;
 		}
 
-		public String getTipTitle(){
+		public String getTipTitle() {
 			return myEntry.Title;
 		}
 		
-		public String getTipContext(){
+		public String getTipContext() {
 			return myEntry.Content;
 		}
 	}
 	
-	public interface ITip{
+	public interface ITip {
 		String getTipTitle();
 		String getTipContext();
 	}
 	
-	public interface ITipFeedListener{
+	public interface ITipFeedListener {
 		void tipFound(Tip tip);
 	}
 }
