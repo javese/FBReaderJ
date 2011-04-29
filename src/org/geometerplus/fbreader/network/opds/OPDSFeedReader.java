@@ -21,5 +21,5 @@ package org.geometerplus.fbreader.network.opds;
 
 import org.geometerplus.fbreader.network.atom.ATOMFeedReader;
 
-public interface OPDSFeedReader extends ATOMFeedReader<OPDSFeedMetadata, OPDSEntry> {
+public interface OPDSFeedReader extends ATOMFeedReader<OPDSFeedMetadata,OPDSEntry> {
 }
