@@ -91,7 +91,7 @@ public class TipsHelper {
 			tipsFile = getDefaultTipsFile();
 		}
 		
-		new ATOMXMLReader(new TipsATOMFeedHandler(currId)).read(tipsFile);
+		new ATOMXMLReader(new TipsATOMFeedHandler(currId), false).read(tipsFile);
 	}
 	
 	private ZLFile getDefaultTipsFile() {
