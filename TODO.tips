@@ -5,3 +5,5 @@ DONE 	кнопка next
 DONE 	от xml-парсера - отнаследовать AtomParser
 DONE 	от AtomParser'a => OPDSParser
 *	(со временем) механизм, позволяющий по "сслыке" открывать определенные вью FBReaderJ
+* 	небольшой парсер для выделения ссылок в тексте (уметь парсить <a href=... /> )
+* 	диалог - activity (ориентироваться на org.geometerplus.android.fbreader.network.AuthenticationActivity)
