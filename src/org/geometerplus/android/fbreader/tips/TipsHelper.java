@@ -20,6 +20,7 @@
 package org.geometerplus.android.fbreader.tips;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import org.geometerplus.fbreader.Paths;
@@ -95,7 +96,7 @@ public class TipsHelper {
 	}
 	
 	private ZLFile getDefaultTipsFile() {
-		return ZLResourceFile.createResourceFile("tips/tips.xml");		
+		return ZLResourceFile.createResourceFile("tips/tips." + Locale.getDefault().getLanguage() + ".xml");		
 	}
 
 	private class TipsATOMFeedHandler implements ATOMFeedHandler {

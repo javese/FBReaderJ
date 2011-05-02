@@ -179,9 +179,9 @@ public final class FBReader extends ZLAndroidActivity {
 		if (!ourNavigatePanel.hasControlPanel()) {
 			ourNavigatePanel.createControlPanel(this, root);
 		}
-		
-		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
+
 		UIUtil.wait("loadingBook", showTip, this);
+		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
 	}
 	
 	private Runnable showTip = new Runnable() {

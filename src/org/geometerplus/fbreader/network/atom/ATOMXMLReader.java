@@ -515,7 +515,6 @@ public class ATOMXMLReader extends ZLXMLReaderAdapter {
 				if (ns == XMLNamespaces.Atom && tag == TAG_CONTENT) {
 					// TODO:implement ATOMContent
 					myEntry.Content = myHtmlToString.finishTextContent(bufferContent);
-					Log.v(TipsKeys.TIPS_LOG, bufferContent + "    myEntry.Content: " + myEntry.Content);
 					myState = F_ENTRY;
 				} else {
 					myHtmlToString.processTextContent(true, tag, null, bufferContent);
