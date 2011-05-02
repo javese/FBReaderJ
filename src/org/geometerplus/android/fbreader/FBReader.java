@@ -180,7 +180,9 @@ public final class FBReader extends ZLAndroidActivity {
 			ourNavigatePanel.createControlPanel(this, root);
 		}
 
+		// FIXME bac1ca
 		UIUtil.wait("loadingBook", showTip, this);
+//		new Handler().postDelayed(showTip, 3000);
 		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
 	}
 	
