@@ -46,7 +46,7 @@ import org.geometerplus.android.fbreader.library.KillerCallback;
 
 import org.geometerplus.android.util.UIUtil;
 
-import org.geometerplus.android.fbreader.tips.TipsDialog;
+import org.geometerplus.android.fbreader.tips.TipsActivity;
 import org.geometerplus.android.fbreader.tips.TipsDownloadService;
 
 public final class FBReader extends ZLAndroidActivity {
@@ -181,8 +181,15 @@ public final class FBReader extends ZLAndroidActivity {
 		}
 		
 		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
-		new TipsDialog(this).show();
+		UIUtil.wait("loadingBook", showTip, this);
 	}
+	
+	private Runnable showTip = new Runnable() {
+		@Override
+		public void run() {
+			startActivity(new Intent(getApplicationContext(), TipsActivity.class));
+		}
+	};
 	
 	@Override
 	public void onResume() {

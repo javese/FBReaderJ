@@ -156,6 +156,8 @@
 		</activity>
 		<receiver android:name="org.geometerplus.android.fbreader.network.BookDownloaderCallback" android:process=":networkLibrary" />
 		<service android:name="org.geometerplus.android.fbreader.network.LibraryInitializationService" android:process=":networkLibrary" />
+
+		<activity android:name="org.geometerplus.android.fbreader.tips.TipsActivity" android:process=":tips" android:configChanges="orientation|keyboardHidden" android:theme="@android:style/Theme.Dialog"/>
 		<service android:name="org.geometerplus.android.fbreader.tips.TipsService"/>
 		<service android:name="org.geometerplus.android.fbreader.tips.TipsDownloadService" android:process=":tips"/>
 	</application>

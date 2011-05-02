@@ -21,6 +21,7 @@ package org.geometerplus.android.fbreader.tips;
 
 import java.io.File;
 
+import org.geometerplus.android.fbreader.FBReader;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.network.ZLNetworkException;
@@ -46,7 +47,6 @@ public class TipsDownloadService extends Service  {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		
 		ZLFile tipsFile = ZLFile.createFileByPath(TIPS_PATH);
 		if (!tipsFile.exists()){
 			Log.v(TipsKeys.TIPS_LOG, "TipsDownloadService - !tipsFile.exists()" );
