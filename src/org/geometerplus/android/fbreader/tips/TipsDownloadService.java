@@ -49,42 +49,16 @@ public class TipsDownloadService extends Service  {
 		ZLFile tipsFile = ZLFile.createFileByPath(TIPS_PATH);
 		if (!tipsFile.exists()){
 			Log.v(TipsKeys.TIPS_LOG, "TipsDownloadService - !tipsFile.exists()" );
-
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					boolean isContinue = true;
-					while (isContinue){
-						if (TipsUtil.isOnline(TipsDownloadService.this)){
-							downloadTips();
-							isContinue = false;
-						} else {
-							long delay = 5 * 60 * 1000; 	// 5 min
-							try {
-								Thread.sleep(delay);
-							} catch (InterruptedException e) {
-								Log.v(TipsKeys.TIPS_LOG, "TipsDownloadService exception :" + e.getMessage());
-								isContinue = false;
-							}
-						}
-					}
-				}
-			};
-			
-			new Thread(r).start();
+			try {
+				File outFile = new File(TIPS_PATH);
+				ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
+				Log.v(TipsKeys.TIPS_LOG, "download done");
+			} catch (ZLNetworkException e) {
+				Log.v(TipsKeys.TIPS_LOG, "download exception: " + e.getMessage());
+			}
 		}
 	}
 
-	private void downloadTips(){
-		try {
-			File outFile = new File(TIPS_PATH);
-			ZLNetworkManager.Instance().downloadToFile(TIPS_URL, outFile);
-			Log.v(TipsKeys.TIPS_LOG, "download done");
-		} catch (ZLNetworkException e) {
-			Log.v(TipsKeys.TIPS_LOG, "download exception: " + e.getMessage());
-		}
-	}
-	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
