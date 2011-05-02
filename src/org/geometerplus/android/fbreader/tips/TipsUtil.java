@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2011 Geometer Plus <contact@geometerplus.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
+ */
+
 package org.geometerplus.android.fbreader.tips;
 
 import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
@@ -7,27 +26,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class TipsUtil {
-
-/*	
- 	// id format example - "fbreader-ru-hint-0001"
-	public static String nextId(String id){
-		int val = Integer.parseInt(id.substring(id.length() - 4));
-		val++;
-		String end = Integer.toString(val);
-		return id.substring(0, id.length() - end.length()) + end;
-	}
-
-	// id format example - "tips-0001.xml"
-	public static String netxFile(String file){
-		String nextFile = file.substring(0, file.length() - 4); 
-		return nextId(nextFile) + ".xml";
-	}
-	
-	public static int getIntId(String id){
-		int result = Integer.parseInt(id.substring(id.length() - 4));
-		return result;
-	}
-*/	
 	
 	public static ZLBooleanOption getShowOption(){
 		return new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true);
