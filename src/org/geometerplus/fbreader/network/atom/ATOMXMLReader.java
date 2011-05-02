@@ -25,7 +25,10 @@ import org.geometerplus.zlibrary.core.constants.XMLNamespaces;
 import org.geometerplus.zlibrary.core.xml.ZLStringMap;
 import org.geometerplus.zlibrary.core.xml.ZLXMLReaderAdapter;
 
+import org.geometerplus.android.fbreader.tips.TipsKeys;
 import org.geometerplus.fbreader.network.opds.HtmlToString;
+
+import android.util.Log;
 
 public class ATOMXMLReader extends ZLXMLReaderAdapter {
 	public static String intern(String str) {
@@ -512,6 +515,7 @@ public class ATOMXMLReader extends ZLXMLReaderAdapter {
 				if (ns == XMLNamespaces.Atom && tag == TAG_CONTENT) {
 					// TODO:implement ATOMContent
 					myEntry.Content = myHtmlToString.finishTextContent(bufferContent);
+					Log.v(TipsKeys.TIPS_LOG, bufferContent + "    myEntry.Content: " + myEntry.Content);
 					myState = F_ENTRY;
 				} else {
 					myHtmlToString.processTextContent(true, tag, null, bufferContent);
