@@ -2,21 +2,15 @@ package org.geometerplus.android.fbreader.tips;
 
 import org.geometerplus.android.fbreader.tips.TipsHelper.ITip;
 import org.geometerplus.android.fbreader.tips.TipsHelper.ITipFeedListener;
-import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.core.util.ZLNetworkUtil;
 import org.geometerplus.zlibrary.ui.android.R;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.method.MovementMethod;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -61,10 +55,7 @@ public class TipsActivity extends Activity {
 			@Override
 			public void tipFound(ITip tip) {
 				setTitle(tip.getTipTitle());
-//				String text = "Посетите  <a href=\"http://fbreader.org\">официальный сайт</a> FBReader";
-//				textView.setText(getCommentText(text));
-				Log.v(TipsKeys.TIPS_LOG, "content: " + tip.getTipContext());
-				textView.setText(getCommentText(tip.getTipContext()));
+				textView.setText(getAnalyzeText(tip.getTipContext()));
 				textView.setMovementMethod(LinkMovementMethod.getInstance());
 			}
 		};
@@ -76,7 +67,7 @@ public class TipsActivity extends Activity {
 		TipsUtil.getShowOption().setValue(false);
 	}
 		
-	private CharSequence getCommentText(String originalText) {
+	private CharSequence getAnalyzeText(String originalText) {
 		final SpannableStringBuilder builder = new SpannableStringBuilder();
 		while (true) {
 			int index = originalText.indexOf("<a");
