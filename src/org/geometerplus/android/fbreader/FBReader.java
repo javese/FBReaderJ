@@ -29,7 +29,6 @@ import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-import org.geometerplus.zlibrary.core.dialogs.ZLDialogManager;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 
 import org.geometerplus.zlibrary.text.hyphenation.ZLTextHyphenator;
@@ -44,12 +43,10 @@ import org.geometerplus.fbreader.bookmodel.BookModel;
 import org.geometerplus.fbreader.library.Book;
 
 import org.geometerplus.android.fbreader.library.KillerCallback;
-import org.geometerplus.android.fbreader.network.AuthenticationActivity;
 
 import org.geometerplus.android.util.UIUtil;
 
 import org.geometerplus.android.fbreader.tips.TipsActivity;
-import org.geometerplus.android.fbreader.tips.TipsDialog;
 import org.geometerplus.android.fbreader.tips.TipsDownloadService;
 
 public final class FBReader extends ZLAndroidActivity {
