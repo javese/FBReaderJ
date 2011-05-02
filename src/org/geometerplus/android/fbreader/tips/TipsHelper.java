@@ -153,6 +153,6 @@ public class TipsHelper {
 	}
 	
 	public interface ITipFeedListener {
-		void tipFound(Tip tip);
+		void tipFound(ITip tip);
 	}
 }

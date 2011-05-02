@@ -1,17 +1,15 @@
 package org.geometerplus.android.fbreader.tips;
 
+import org.geometerplus.android.fbreader.tips.TipsHelper.ITip;
 import org.geometerplus.android.fbreader.tips.TipsHelper.ITipFeedListener;
-import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
+import org.geometerplus.zlibrary.core.util.ZLNetworkUtil;
 import org.geometerplus.zlibrary.ui.android.R;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
-import android.text.method.MovementMethod;
 import android.text.style.URLSpan;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -55,10 +53,10 @@ public class TipsActivity extends Activity {
 		
 		myTipFeedListener = new ITipFeedListener() {
 			@Override
-			public void tipFound(Tip tip) {
-				textView.setText((tip.getTipContext()));
-				parseTextViewCotext(textView);
+			public void tipFound(ITip tip) {
 				setTitle(tip.getTipTitle());
+				textView.setText(getCommentText(tip.getTipContext()));
+				textView.setMovementMethod(LinkMovementMethod.getInstance());
 			}
 		};
 		new TipsHelper(myTipFeedListener).showTip();
@@ -68,37 +66,44 @@ public class TipsActivity extends Activity {
 	private void dontShowAction(){
 		TipsUtil.getShowOption().setValue(false);
 	}
-	
-	private void parseTextViewCotext(TextView view) {
-		for (String s : view.getText().toString().split("\\s+")){
-			if (isLink(s)){
-				parseTextViewCotext(view, s);
-			} 
-		}
-	}
-	
-	private void parseTextViewCotext(TextView textView, String url) {
-		CharSequence text = textView.getText();
-		int start = text.toString().indexOf(url);
-		int end = start + url.length();
-		if (start == -1)
-			return;
+		
+	private CharSequence getCommentText(String originalText) {
+		final SpannableStringBuilder builder = new SpannableStringBuilder();
+		while (true) {
+			int index = originalText.indexOf("<a");
+			if (index == -1) {
+				builder.append(originalText);
+				break;
+			}
+			builder.append(originalText.substring(0, index));
+			originalText = originalText.substring(index);
 
-		if (text instanceof Spannable) {
-			((Spannable) text).setSpan(new URLSpan(url), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		} else {
-			SpannableString s = SpannableString.valueOf(text);
-			s.setSpan(new URLSpan(url), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			textView.setText(s);
-		}
+			index = originalText.indexOf(">");
+			if (index == -1) {
+				break;
+			}
+			String hyperlinkText = originalText.substring(0, index + 1);
+			final int start = hyperlinkText.indexOf("\"");
+			final int end = hyperlinkText.lastIndexOf("\"");
+			if (start == end) {
+				break;
+			}
+			hyperlinkText = hyperlinkText.substring(start + 1, end);
+			hyperlinkText = ZLNetworkUtil.appendParameter(hyperlinkText, null, null);
 
-		MovementMethod m = textView.getMovementMethod();
-		if ((m == null) || !(m instanceof LinkMovementMethod)) {
-			textView.setMovementMethod(LinkMovementMethod.getInstance());
+			originalText = originalText.substring(index + 1);
+
+			index = originalText.indexOf("</a>");
+			if (index == -1) {
+				break;
+			}
+			final int len = builder.length();
+			builder.append(originalText.substring(0, index));
+			builder.setSpan(new URLSpan(hyperlinkText), len, len + index, 0);
+			originalText = originalText.substring(index + 4);
 		}
+		
+		return builder.subSequence(0, builder.length());
 	}
-	
-	private boolean isLink(String str){
-			return str.contains("://") ||  str.matches("(?s)^[a-zA-Z][a-zA-Z0-9+-.]*:.*$"); 
-	}
+
 }
