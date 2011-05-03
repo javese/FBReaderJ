@@ -19,6 +19,9 @@
 
 package org.geometerplus.android.fbreader;
 
+import java.util.Date;
+
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
@@ -181,18 +184,40 @@ public final class FBReader extends ZLAndroidActivity {
 		}
 
 		// FIXME bac1ca
-		UIUtil.wait("loadingBook", showTip, this);
+
 //		new Handler().postDelayed(showTip, 3000);
-		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
+//		startService(new Intent(getApplicationContext(), TipsDownloadService.class));
+//		showTip.run();
 	}
-	
+
+	private boolean myWasResumed;
+	static long time = 0;
+
+	@Override
+	public void onDrawFinished() {
+		if (myWasResumed) {
+			UIUtil.wait("loadingBook", new Runnable() {
+				@Override
+				public void run() {
+					final long now = new Date().getTime();
+					if (time < now) {
+						runOnUiThread(showTip);
+						time = now + 10000;
+					}
+				}
+			}, this);
+			myWasResumed = false;
+		}
+	}
+
 	private Runnable showTip = new Runnable() {
 		@Override
 		public void run() {
 			startActivity(new Intent(getApplicationContext(), TipsActivity.class));
 		}
 	};
-	
+
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -201,7 +226,9 @@ public final class FBReader extends ZLAndroidActivity {
 		} catch (Throwable t) {
 		}
 		ControlButtonPanel.restoreVisibilities(FBReaderApp.Instance());
+		myWasResumed = true;
 	}
+
 
 	@Override
 	public void onPause() {

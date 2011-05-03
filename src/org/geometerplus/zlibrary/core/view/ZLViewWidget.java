@@ -20,6 +20,12 @@
 package org.geometerplus.zlibrary.core.view;
 
 public interface ZLViewWidget {
+
+	public interface OnDrawFinishedListener {
+		void onDrawFinished();
+	}
+	void setOnDrawFinishedListener(OnDrawFinishedListener l);
+
 	void reset();
 	void repaint();
 

@@ -26,6 +26,7 @@ import android.util.AttributeSet;
 
 import org.geometerplus.zlibrary.core.view.ZLView;
 import org.geometerplus.zlibrary.core.view.ZLViewWidget;
+import org.geometerplus.zlibrary.core.view.ZLViewWidget.OnDrawFinishedListener;
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidActivity;
@@ -35,6 +36,15 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 	private final Paint myPaint = new Paint();
 	private final BitmapManager myBitmapManager = new BitmapManager(this);
 	private Bitmap myFooterBitmap;
+
+	private OnDrawFinishedListener myListener;
+
+	public void setOnDrawFinishedListener(OnDrawFinishedListener l) {
+		synchronized (this) {
+			myListener = l;
+		}
+	}
+
 
 	public ZLAndroidWidget(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -89,6 +99,11 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 		} else {
 			onDrawStatic(canvas);
 			ZLApplication.Instance().onRepaintFinished();
+		}
+		synchronized (this) {
+			if (myListener != null) {
+				myListener.onDrawFinished();
+			}
 		}
 	}
 

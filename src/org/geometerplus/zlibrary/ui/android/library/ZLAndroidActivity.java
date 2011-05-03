@@ -29,13 +29,15 @@ import android.content.res.Configuration;
 import android.view.*;
 import android.os.PowerManager;
 
+import org.geometerplus.android.fbreader.tree.ZLAndroidTree;
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.view.ZLViewWidget;
 
 import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.zlibrary.ui.android.application.ZLAndroidApplicationWindow;
 
-public abstract class ZLAndroidActivity extends Activity {
+public abstract class ZLAndroidActivity extends Activity implements ZLViewWidget.OnDrawFinishedListener {
 	protected abstract ZLApplication createApplication(ZLFile file);
 
 	private static final String REQUESTED_ORIENTATION_KEY = "org.geometerplus.zlibrary.ui.android.library.androidActiviy.RequestedOrientation";
@@ -111,6 +113,7 @@ public abstract class ZLAndroidActivity extends Activity {
 		} else {
 			ZLApplication.Instance().openFile(fileToOpen);
 		}
+		ZLApplication.Instance().getViewWidget().setOnDrawFinishedListener(this);
 		ZLApplication.Instance().getViewWidget().repaint();
 	}
 
