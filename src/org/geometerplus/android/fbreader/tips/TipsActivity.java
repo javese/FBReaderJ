@@ -19,8 +19,11 @@
 
 package org.geometerplus.android.fbreader.tips;
 
+import java.util.Date;
+
 import org.geometerplus.android.fbreader.tips.TipsHelper.ITip;
 import org.geometerplus.android.fbreader.tips.TipsHelper.ITipFeedListener;
+import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
 import org.geometerplus.zlibrary.core.util.ZLNetworkUtil;
 import org.geometerplus.zlibrary.ui.android.R;
@@ -42,8 +45,17 @@ public class TipsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		
+		ZLIntegerOption dateOpt = TipsHelper.getDateOprion();
+		int lastDate = dateOpt.getValue();
+		if (lastDate == new Date().getDate()){ 				
+//		if (lastDate == new Date().getDate() && false){ 	// for testing
+			finish();
+			return;
+		}
+		
 		setContentView(R.layout.tip_dialog);
-	
+		
 		final ZLResource dialogResource = ZLResource.resource("dialog");	
 		final TextView textView = ((TextView)findViewById(R.id.plugin_dialog_text));
 		final CheckBox checkBox = (CheckBox)findViewById(R.id.plugin_dialog_checkbox);
@@ -66,7 +78,7 @@ public class TipsActivity extends Activity {
 		btnNext.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new TipsHelper(myTipFeedListener).showTipForce();
+				new TipsHelper(myTipFeedListener).showTip();
 			}
 		});
 		
@@ -83,7 +95,7 @@ public class TipsActivity extends Activity {
 	}	
 	
 	private void dontShowAction(){
-		TipsUtil.getShowOption().setValue(false);
+		TipsHelper.getShowOption().setValue(false);
 	}
 		
 	private CharSequence getAnalyzeText(String originalText) {

@@ -87,7 +87,7 @@ public abstract class UIUtil {
 			}
 		}).start();
 	}
-
+	
 	public static void runWithMessage(Context context, String key, final Runnable action, final Runnable postAction) {
 		final String message =
 			ZLResource.resource("dialog").getResource("waitMessage").getResource(key).getValue();

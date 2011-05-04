@@ -30,6 +30,7 @@ import org.geometerplus.fbreader.network.atom.ATOMFeedHandler;
 import org.geometerplus.fbreader.network.atom.ATOMXMLReader;
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 import org.geometerplus.zlibrary.core.filesystem.ZLResourceFile;
+import org.geometerplus.zlibrary.core.options.ZLBooleanOption;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 
 import android.util.Log;
@@ -45,25 +46,9 @@ public class TipsHelper {
 	}
 
 	public void showTip() {
-		boolean isShowTips = TipsUtil.getShowOption().getValue();
+		boolean isShowTips = getShowOption().getValue();
 		if (isShowTips) {
-			int currDate = new Date().getDate();
-			ZLIntegerOption dateOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
-			int lastDate = dateOpt.getValue();
-
-			//if (lastDate != currDate) 		//uncomment later
-			if (lastDate != currDate || true) { 	// for testing
-				dateOpt.setValue(currDate);
-				tryShowTip();
-			}
-		}
-	}
-	
-	public void showTipForce() {
-		boolean isShowTips = TipsUtil.getShowOption().getValue();
-		if (isShowTips) {
-			ZLIntegerOption dateOpt = new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
-			dateOpt.setValue(new Date().getDate());
+			getDateOprion().setValue(new Date().getDate());
 			tryShowTip();
 		}
 	}
@@ -99,6 +84,14 @@ public class TipsHelper {
 		return ZLResourceFile.createResourceFile("tips/tips." + Locale.getDefault().getLanguage() + ".xml");		
 	}
 
+	public static ZLBooleanOption getShowOption(){
+		return new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true);
+	}
+	
+	public static ZLIntegerOption getDateOprion(){
+		return new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
+	}
+	
 	private class TipsATOMFeedHandler implements ATOMFeedHandler {
 		int myTipId;
 		TipsATOMFeedHandler(int tipId) {

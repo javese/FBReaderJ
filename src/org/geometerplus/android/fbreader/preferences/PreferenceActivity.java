@@ -31,7 +31,7 @@ import org.geometerplus.zlibrary.text.view.style.*;
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidApplication;
 import org.geometerplus.zlibrary.ui.android.view.AndroidFontUtil;
 
-import org.geometerplus.android.fbreader.tips.TipsUtil;
+import org.geometerplus.android.fbreader.tips.TipsHelper;
 import org.geometerplus.fbreader.fbreader.*;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.bookmodel.FBTextKind;
@@ -406,7 +406,7 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		
 		final Screen tipsScreen = createPreferenceScreen("tips");
 		tipsScreen.addPreference(new ZLBooleanPreference(
-			this, TipsUtil.getShowOption(), tipsScreen.Resource,
+			this, TipsHelper.getShowOption(), tipsScreen.Resource,
 			"showTips"
 		));
 	}
