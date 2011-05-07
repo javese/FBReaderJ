@@ -23,8 +23,6 @@ import java.util.*;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Message;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.ContextMenu;
 
@@ -291,12 +289,45 @@ class NetworkCatalogActions extends NetworkTreeActions {
 		return false;
 	}
 
-
-	private static class ExpandCatalogHandler extends ItemsLoadingHandler {
+	private static class CatalogExpander extends ItemsLoader {
 		private final NetworkCatalogTree myTree;
+		private final boolean myCheckAuthentication;
+		private final boolean myResumeNotLoad;
 
-		ExpandCatalogHandler(NetworkCatalogTree tree) {
+		public CatalogExpander(Activity activity,
+				NetworkCatalogTree tree, boolean checkAuthentication, boolean resumeNotLoad) {
+			super(activity);
 			myTree = tree;
+			myCheckAuthentication = checkAuthentication;
+			myResumeNotLoad = resumeNotLoad;
+		}
+
+		public String getResourceKey() {
+			return "downloadingCatalogs";
+		}
+
+		@Override
+		public void doBefore() throws ZLNetworkException {
+			final INetworkLink link = myTree.Item.Link;
+			if (myCheckAuthentication && link.authenticationManager() != null) {
+				final NetworkAuthenticationManager mgr = link.authenticationManager();
+				try {
+					if (mgr.isAuthorised(true) && mgr.needsInitialization()) {
+						mgr.initialize();
+					}
+				} catch (ZLNetworkException e) {
+					mgr.logOut();
+				}
+			}
+		}
+
+		@Override
+		public void doLoading(NetworkOperationData.OnNewItemListener doWithListener) throws ZLNetworkException {
+			if (myResumeNotLoad) {
+				myTree.Item.resumeLoading(doWithListener);
+			} else {
+				myTree.Item.loadChildren(doWithListener);
+			}
 		}
 
 		@Override
@@ -319,7 +350,7 @@ class NetworkCatalogActions extends NetworkTreeActions {
 				myTree.removeItems(uncommitedItems);
 				myTree.updateLoadedTime();
 				if (!interrupted) {
-					NetworkView.Instance().fireModelChanged();
+					afterUpdateCatalog(errorMessage, myTree.ChildrenItems.size() == 0);
 				}
 				final NetworkLibrary library = NetworkLibrary.Instance();
 				library.invalidateVisibility();
@@ -341,50 +372,6 @@ class NetworkCatalogActions extends NetworkTreeActions {
 		}
 	}
 
-	private static class ExpandCatalogRunnable extends ItemsLoadingRunnable {
-		private final NetworkCatalogTree myTree;
-		private final boolean myCheckAuthentication;
-		private final boolean myResumeNotLoad;
-
-		public ExpandCatalogRunnable(ItemsLoadingHandler handler,
-				NetworkCatalogTree tree, boolean checkAuthentication, boolean resumeNotLoad) {
-			super(handler);
-			myTree = tree;
-			myCheckAuthentication = checkAuthentication;
-			myResumeNotLoad = resumeNotLoad;
-		}
-
-		public String getResourceKey() {
-			return "downloadingCatalogs";
-		}
-
-		@Override
-		public void doBefore() throws ZLNetworkException {
-			/*if (!NetworkOperationRunnable::tryConnect()) {
-				return;
-			}*/
-			final INetworkLink link = myTree.Item.Link;
-			if (myCheckAuthentication && link.authenticationManager() != null) {
-				final NetworkAuthenticationManager mgr = link.authenticationManager();
-				try {
-					if (mgr.isAuthorised(true) && mgr.needsInitialization()) {
-						mgr.initialize();
-					}
-				} catch (ZLNetworkException e) {
-					mgr.logOut();
-				}
-			}
-		}
-
-		@Override
-		public void doLoading(NetworkOperationData.OnNewItemListener doWithListener) throws ZLNetworkException {
-			if (myResumeNotLoad) {
-				myTree.Item.resumeLoading(doWithListener);
-			} else {
-				myTree.Item.loadChildren(doWithListener);
-			}
-		}
-	}
 
 	private static void processExtraData(final Activity activity, Map<String,String> extraData, final Runnable postRunnable) {
 		if (extraData != null && !extraData.isEmpty()) {
@@ -415,7 +402,7 @@ class NetworkCatalogActions extends NetworkTreeActions {
 
 				/* FIXME: if catalog's loading will be very fast
 				 * then it is possible that loading message is lost
-				 * (see ExpandCatalogHandler.afterUpdateCatalog method).
+				 * (see afterUpdateCatalog method).
 				 * 
 				 * For example, this can be fixed via adding method
 				 * NetworkView.postCatalogLoadingResult, that will do the following:
@@ -423,11 +410,10 @@ class NetworkCatalogActions extends NetworkTreeActions {
 				 * 2) If there is no activity, then save message, and show when activity is created
 				 * 3) Remove unused messages (say, by timeout)
 				 */
-				final ExpandCatalogHandler handler = new ExpandCatalogHandler(tree);
 				ItemsLoadingService.start(
 					activity,
 					tree,
-					new ExpandCatalogRunnable(handler, tree, true, resumeNotLoad)
+					new CatalogExpander(activity, tree, true, resumeNotLoad)
 				);
 				processExtraData(activity, tree.Item.extraData(), new Runnable() {
 					public void run() {
@@ -445,11 +431,10 @@ class NetworkCatalogActions extends NetworkTreeActions {
 		tree.ChildrenItems.clear();
 		tree.clear();
 		NetworkView.Instance().fireModelChangedAsync();
-		final ExpandCatalogHandler handler = new ExpandCatalogHandler(tree);
 		ItemsLoadingService.start(
 			activity,
 			tree,
-			new ExpandCatalogRunnable(handler, tree, false, false)
+			new CatalogExpander(activity, tree, false, false)
 		);
 	}
 
