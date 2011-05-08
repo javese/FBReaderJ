@@ -125,28 +125,23 @@ public class TipsHelper {
 		
 	}
 	
-	public class Tip implements ITip {
+	public class Tip {
 		private ATOMEntry myEntry;
 		
 		Tip(ATOMEntry entry) {
 			myEntry = entry;
 		}
 
-		public String getTipTitle() {
+		public CharSequence getTipTitle() {
 			return myEntry.Title;
 		}
 		
-		public String getTipContext() {
+		public CharSequence getTipContent() {
 			return myEntry.Content;
 		}
 	}
 	
-	public interface ITip {
-		String getTipTitle();
-		String getTipContext();
-	}
-	
 	public interface ITipFeedListener {
-		void tipFound(ITip tip);
+		void tipFound(Tip tip);
 	}
 }

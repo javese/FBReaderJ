@@ -21,7 +21,7 @@ package org.geometerplus.android.fbreader.tips;
 
 import java.util.Date;
 
-import org.geometerplus.android.fbreader.tips.TipsHelper.ITip;
+import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
 import org.geometerplus.android.fbreader.tips.TipsHelper.ITipFeedListener;
 import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
@@ -30,7 +30,6 @@ import org.geometerplus.zlibrary.ui.android.R;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
@@ -85,9 +84,9 @@ public class TipsActivity extends Activity {
 
 		myTipFeedListener = new ITipFeedListener() {
 			@Override
-			public void tipFound(ITip tip) {
+			public void tipFound(Tip tip) {
 				setTitle(tip.getTipTitle());
-				textView.setText(Html.fromHtml(tip.getTipContext()));
+				textView.setText(tip.getTipContent());
 				textView.setMovementMethod(LinkMovementMethod.getInstance());
 			}
 		};
