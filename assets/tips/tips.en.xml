@@ -12,7 +12,7 @@
 		<title>Tip1</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0001</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -20,7 +20,7 @@
 		<title>Tip2</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0002</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -28,7 +28,7 @@
 		<title>Tip3</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0003</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -36,7 +36,7 @@
 		<title>Tip4</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0004</id>		
-		<content type="text">
+		<content type="html">
 			&lt;a href="http://www.ietf.org/rfc/rfc3066.txt"&gt;Language-Sensitive&lt;/a&gt;.
 		</content>
 	</entry>
@@ -44,7 +44,7 @@
 		<title>Tip5</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0005</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -52,7 +52,7 @@
 		<title>Tip6</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0006</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -60,7 +60,7 @@
 		<title>Tip7</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0007</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -68,7 +68,7 @@
 		<title>Tip8</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0008</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -76,7 +76,7 @@
 		<title>Tip9</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0009</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
@@ -84,7 +84,7 @@
 		<title>Tip10</title>
 		<updated>2011-04-19T06:32:30Z</updated>
 		<id>http://data.fbreader.org/tips/FBReader-hint-0010</id>		
-		<content type="text">
+		<content type="html">
 			Visit &lt;a href="http://fbreader.org"&gt;official website&lt;/a&gt; FBReader.
 		</content>
 	</entry>
