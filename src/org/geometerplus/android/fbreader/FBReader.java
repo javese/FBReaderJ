@@ -20,6 +20,8 @@
 package org.geometerplus.android.fbreader;
 
 
+import java.util.Date;
+
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,6 +33,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import org.geometerplus.zlibrary.core.filesystem.ZLFile;
+import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 
 import org.geometerplus.zlibrary.text.hyphenation.ZLTextHyphenator;
 
@@ -49,6 +52,7 @@ import org.geometerplus.android.util.UIUtil;
 
 import org.geometerplus.android.fbreader.tips.TipsActivity;
 import org.geometerplus.android.fbreader.tips.TipsDownloadService;
+import org.geometerplus.android.fbreader.tips.TipsHelper;
 
 public final class FBReader extends ZLAndroidActivity {
 	public static final String BOOK_PATH_KEY = "BookPath";
@@ -200,7 +204,10 @@ public final class FBReader extends ZLAndroidActivity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					startActivity(new Intent(getApplicationContext(), TipsActivity.class));
+					int lastDate = TipsHelper.getDateOption().getValue();
+					if (lastDate != new Date().getDate()) {
+						startActivity(new Intent(getApplicationContext(), TipsActivity.class));
+					}
 				}
 			});
 		}

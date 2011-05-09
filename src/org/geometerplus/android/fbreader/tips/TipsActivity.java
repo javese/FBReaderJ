@@ -19,20 +19,14 @@
 
 package org.geometerplus.android.fbreader.tips;
 
-import java.util.Date;
-
 import org.geometerplus.android.fbreader.tips.TipsHelper.Tip;
 import org.geometerplus.android.fbreader.tips.TipsHelper.ITipFeedListener;
-import org.geometerplus.zlibrary.core.options.ZLIntegerOption;
 import org.geometerplus.zlibrary.core.resources.ZLResource;
-import org.geometerplus.zlibrary.core.util.ZLNetworkUtil;
 import org.geometerplus.zlibrary.ui.android.R;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
-import android.text.style.URLSpan;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -45,17 +39,7 @@ public class TipsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-
-		ZLIntegerOption dateOpt = TipsHelper.getDateOprion();
-		int lastDate = dateOpt.getValue();
-		if (lastDate == new Date().getDate()) {
-//		if (lastDate == new Date().getDate() && false){ 	// for testing
-			finish();
-			return;
-		}
-
 		setContentView(R.layout.tip_dialog);
-
 		final ZLResource dialogResource = ZLResource.resource("dialog");
 		final TextView textView = ((TextView)findViewById(R.id.plugin_dialog_text));
 		final CheckBox checkBox = (CheckBox)findViewById(R.id.plugin_dialog_checkbox);

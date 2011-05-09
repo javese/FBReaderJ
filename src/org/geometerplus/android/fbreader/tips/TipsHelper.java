@@ -48,7 +48,7 @@ public class TipsHelper {
 	public void showTip() {
 		boolean isShowTips = getShowOption().getValue();
 		if (isShowTips) {
-			getDateOprion().setValue(new Date().getDate());
+			getDateOption().setValue(new Date().getDate());
 			tryShowTip();
 		}
 	}
@@ -88,7 +88,7 @@ public class TipsHelper {
 		return new ZLBooleanOption(TipsKeys.OPTION_GROUP, TipsKeys.SHOW_TIPS, true);
 	}
 	
-	public static ZLIntegerOption getDateOprion(){
+	public static ZLIntegerOption getDateOption(){
 		return new ZLIntegerOption(TipsKeys.OPTION_GROUP, TipsKeys.LAST_TIP_DATE, 0);
 	}
 	
