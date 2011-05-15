@@ -99,7 +99,9 @@ public abstract class ZLAndroidActivity extends Activity implements ZLViewWidget
 		}
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		disableButtonLight();
+		if (ZLAndroidApplication.Instance().DisableButtonLightsOption.getValue()) {
+			disableButtonLight();
+		}
 		setContentView(R.layout.main);
 		setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
