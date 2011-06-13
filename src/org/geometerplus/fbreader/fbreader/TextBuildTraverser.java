@@ -17,21 +17,38 @@
  * 02110-1301, USA.
  */
 
-package org.geometerplus.zlibrary.core.view;
+package org.geometerplus.fbreader.fbreader;
 
-public interface ZLViewWidget {
+import org.geometerplus.zlibrary.text.view.*;
 
-	public interface OnDrawFinishedListener {
-		void onDrawFinished();
+class TextBuildTraverser extends ZLTextTraverser {
+	protected final StringBuilder myBuffer = new StringBuilder();
+
+	TextBuildTraverser(ZLTextView view) {
+		super(view);
 	}
-	void setOnDrawFinishedListener(OnDrawFinishedListener l);
 
-	void reset();
-	void repaint();
+	@Override
+	protected void processWord(ZLTextWord word) {
+		myBuffer.append(word.Data, word.Offset, word.Length);
+	}
 
-	void startManualScrolling(int x, int y, ZLView.Direction direction);
-	void scrollManuallyTo(int x, int y);
-	void startAnimatedScrolling(ZLView.PageIndex pageIndex, int x, int y, ZLView.Direction direction, int speed);
-	void startAnimatedScrolling(ZLView.PageIndex pageIndex, ZLView.Direction direction, int speed);
-	void startAnimatedScrolling(int x, int y, int speed);
+	@Override
+	protected void processControlElement(ZLTextControlElement control) {
+		// does nothing
+	}
+
+	@Override
+	protected void processSpace() {
+		myBuffer.append(" ");
+	}
+
+	@Override
+	protected void processEndOfParagraph() {
+		myBuffer.append("\n");
+	}
+
+	public String getText() {
+		return myBuffer.toString();
+	}
 }

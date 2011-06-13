@@ -36,6 +36,8 @@ import org.geometerplus.fbreader.fbreader.*;
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.fbreader.bookmodel.FBTextKind;
 
+import org.geometerplus.android.fbreader.DictionaryUtil;
+
 public class PreferenceActivity extends ZLPreferenceActivity {
 	public PreferenceActivity() {
 		super("Preferences");
@@ -377,7 +379,14 @@ public class PreferenceActivity extends ZLPreferenceActivity {
 		dictionaryScreen.addPreference(new DictionaryPreference(
 			this,
 			dictionaryScreen.Resource,
-			"dictionary"
+			"dictionary",
+			DictionaryUtil.singleWordTranslatorOption()
+		));
+		dictionaryScreen.addPreference(new DictionaryPreference(
+			this,
+			dictionaryScreen.Resource,
+			"translator",
+			DictionaryUtil.multiWordTranslatorOption()
 		));
 		dictionaryScreen.addPreference(new ZLBooleanPreference(
 			this,
