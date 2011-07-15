@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Hungarian FBReaderJ resources, by L. B. Szabó. Based on FBReader translation by Sándor Gábor -->
 <resources>
-	<node name="library">
+	<node name="library" value="FBReader library" toBeTranslated="true">
 		<node name="unknownAuthor" value="Ismeretlen szerző"/>
 		<node name="booksWithNoTags" value="Címke nélküli könyvek"/>
 		<node name="demo" value="minta"/>
-	</node>
-	<node name="libraryView">
 		<node name="byAuthor" value="Szerzők">
 			<node name="summary" value="Könyvek szerzők szerint"/>
 		</node>
@@ -46,7 +44,7 @@
 		<node name="addToFavorites" value="Hozzáadás a kedvencekhez"/>
 		<node name="removeFromFavorites" value="Eltávolítás a kedvencek közül"/>
 	</node>
-	<node name="networkView">
+	<node name="networkLibrary" value="FBReader network library" toBeTranslated="true">
 		<node name="byAuthor" value="Szerzők">
 			<node name="summary" value="Könyvek szerzők szerint"/>
 		</node>

@@ -19,7 +19,7 @@
 
 package org.geometerplus.android.fbreader.library;
 
-import java.util.*;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.view.*;
@@ -27,6 +27,7 @@ import android.widget.*;
 
 import org.geometerplus.zlibrary.core.image.ZLImage;
 import org.geometerplus.zlibrary.core.image.ZLLoadableImage;
+import org.geometerplus.zlibrary.core.filesystem.ZLFile;
 
 import org.geometerplus.zlibrary.ui.android.image.ZLAndroidImageData;
 import org.geometerplus.zlibrary.ui.android.image.ZLAndroidImageManager;
@@ -35,90 +36,15 @@ import org.geometerplus.zlibrary.ui.android.R;
 import org.geometerplus.fbreader.tree.FBTree;
 import org.geometerplus.fbreader.library.*;
 
-import org.geometerplus.android.fbreader.tree.ZLAndroidTree;
+import org.geometerplus.android.fbreader.tree.BaseActivity;
+import org.geometerplus.android.fbreader.tree.ListAdapter;
 
-public class ListAdapter extends BaseAdapter implements View.OnCreateContextMenuListener {
-	private final BaseActivity myActivity;
-	private final List<FBTree> myItems;
-
-	ListAdapter(BaseActivity activity, List<FBTree> items) {
-		myActivity = activity;
-		myItems = Collections.synchronizedList(items);
+class LibraryListAdapter extends ListAdapter {
+	LibraryListAdapter(BaseActivity activity, List<FBTree> items) {
+		super(activity, items);
 	}
 
-	public void clear() {
-		myActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				myItems.clear();
-			}
-		});
-	}
-
-	public void remove(final FBTree item) {
-		myActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				myItems.remove(item);
-				notifyDataSetChanged();
-			}
-		});
-	}
-
-	public void add(final FBTree item) {
-		myActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				myItems.add(item);
-				notifyDataSetChanged();
-			}
-		});
-	}
-
-	public void add(final int index, final FBTree item) {
-		myActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				myItems.add(index, item);
-				notifyDataSetChanged();
-			}
-		});
-	}
-
-	public void addAll(final Collection<FBTree> items) {
-		myActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				myItems.addAll(items);
-				notifyDataSetChanged();
-			}
-		});
-	}
-
-	@Override
-	public int getCount() {
-		return myItems.size();
-	}
-
-	@Override
-	public FBTree getItem(int position) {
-		return myItems.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-
-	public int getFirstSelectedItemIndex() {
-		int index = 0;
-		synchronized (myItems) {
-			for (FBTree t : myItems) {
-				if (myActivity.isTreeSelected(t)) {
-					return index;
-				}
-				++index;
-			}
-		}
-		return -1;
-	}
-
-	protected Bitmap getCoverBitmap(ZLImage cover) {
+	private Bitmap getCoverBitmap(ZLImage cover) {
 		if (cover == null) {
 			return null;
 		}
@@ -142,11 +68,11 @@ public class ListAdapter extends BaseAdapter implements View.OnCreateContextMenu
 	private int myCoverHeight = -1;
 	private final Runnable myInvalidateViewsRunnable = new Runnable() {
 		public void run() {
-			myActivity.getListView().invalidateViews();
+			getActivity().getListView().invalidateViews();
 		}
 	};
 
-	protected ImageView getCoverView(View parent) {
+	private ImageView getCoverView(View parent) {
 		if (myCoverWidth == -1) {
 			parent.measure(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			myCoverHeight = parent.getMeasuredHeight();
@@ -175,46 +101,56 @@ public class ListAdapter extends BaseAdapter implements View.OnCreateContextMenu
 	public View getView(int position, View convertView, final ViewGroup parent) {
 		final FBTree tree = getItem(position);
 		final View view = createView(convertView, parent, tree);
-		if (myActivity.isTreeSelected(tree)) {
+		if (getActivity().isTreeSelected(tree)) {
 			view.setBackgroundColor(0xff555555);
 		} else {
 			view.setBackgroundColor(0);
 		}
 
 		final ImageView coverView = getCoverView(view);
-
-		if (tree instanceof ZLAndroidTree) {
-			coverView.setImageResource(((ZLAndroidTree)tree).getCoverResourceId());
+		final Bitmap coverBitmap = getCoverBitmap(tree.getCover());
+		if (coverBitmap != null) {
+			coverView.setImageBitmap(coverBitmap);
 		} else {
-			final Bitmap coverBitmap = getCoverBitmap(tree.getCover());
-			if (coverBitmap != null) {
-				coverView.setImageBitmap(coverBitmap);
-			} else if (tree instanceof AuthorTree) {
-				coverView.setImageResource(R.drawable.ic_list_library_author);
-			} else if (tree instanceof TagTree) {
-				coverView.setImageResource(R.drawable.ic_list_library_tag);
-			} else if (tree instanceof BookTree) {
-				coverView.setImageResource(R.drawable.ic_list_library_book);
-			} else if (tree instanceof FileItem) {
-				coverView.setImageResource(((FileItem)tree).getIcon());
-			} else {
-				coverView.setImageResource(R.drawable.ic_list_library_books);
-			}
+			coverView.setImageResource(getCoverResourceId(tree));
 		}
 
 		return view;
 	}
 
-	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
-		final int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
-		final FBTree tree = getItem(position);
-		if (tree instanceof BookTree) {
-			myActivity.createBookContextMenu(menu, ((BookTree)tree).Book);
-		} else if (tree instanceof FileItem) {
-			final Book book = ((FileItem)getItem(position)).getBook();
-			if (book != null) {
-				myActivity.createBookContextMenu(menu, book); 
+	private int getCoverResourceId(FBTree tree) {
+		if (((LibraryTree)tree).getBook() != null) {
+			return R.drawable.ic_list_library_book;
+		} else if (tree instanceof FirstLevelTree) {
+			final String id = tree.getUniqueKey().Id;
+			if (Library.ROOT_FAVORITES.equals(id)) {
+				return R.drawable.ic_list_library_favorites;
+			} else if (Library.ROOT_RECENT.equals(id)) {
+				return R.drawable.ic_list_library_recent;
+			} else if (Library.ROOT_BY_AUTHOR.equals(id)) {
+				return R.drawable.ic_list_library_authors;
+			} else if (Library.ROOT_BY_TITLE.equals(id)) {
+				return R.drawable.ic_list_library_books;
+			} else if (Library.ROOT_BY_TAG.equals(id)) {
+				return R.drawable.ic_list_library_tags;
+			} else if (Library.ROOT_FILE_TREE.equals(id)) {
+				return R.drawable.ic_list_library_folder;
 			}
+		} else if (tree instanceof FileTree) {
+			final ZLFile file = ((FileTree)tree).getFile();
+			if (file.isArchive()) {
+				return R.drawable.ic_list_library_zip;
+			} else if (file.isDirectory() && file.isReadable()) {
+				return R.drawable.ic_list_library_folder;
+			} else {
+				return R.drawable.ic_list_library_permission_denied;
+			}
+		} else if (tree instanceof AuthorTree) {
+			return R.drawable.ic_list_library_author;
+		} else if (tree instanceof TagTree) {
+			return R.drawable.ic_list_library_tag;
 		}
+
+		return R.drawable.ic_list_library_books;
 	}
 }

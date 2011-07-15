@@ -37,6 +37,16 @@ public class BookTree extends LibraryTree {
 	}
 
 	@Override
+	public Book getBook() {
+		return Book;
+	}
+
+	@Override
+	protected String getStringId() {
+		return getName();
+	}
+
+	@Override
 	public String getSummary() {
 		if (!myShowAuthors) {
 			return super.getSummary();
@@ -58,5 +68,10 @@ public class BookTree extends LibraryTree {
 	@Override
 	protected ZLImage createCover() {
 		return Library.getCover(Book.File);
+	}
+
+	@Override
+	public boolean containsBook(Book book) {
+		return book != null && book.equals(Book);
 	}
 }

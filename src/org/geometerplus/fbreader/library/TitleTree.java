@@ -31,4 +31,14 @@ public final class TitleTree extends LibraryTree {
 	public String getName() {
 		return Title;
 	}
+
+	@Override
+	protected String getStringId() {
+		return getName();
+	}
+
+	@Override
+	public boolean containsBook(Book book) {
+		return book != null && book.getTitle() != null && book.getTitle().trim().startsWith(Title);
+	}
 }

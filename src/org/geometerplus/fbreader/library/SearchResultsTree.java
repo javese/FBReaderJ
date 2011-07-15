@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 Geometer Plus <contact@geometerplus.com>
+ * Copyright (C) 2009-2011 Geometer Plus <contact@geometerplus.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,18 @@
  * 02110-1301, USA.
  */
 
-package org.geometerplus.android.fbreader.tree;
+package org.geometerplus.fbreader.library;
 
-public interface ZLAndroidTree {
-	int getCoverResourceId();
+class SearchResultsTree extends FirstLevelTree {
+	private final String myPattern;
+
+	SearchResultsTree(RootTree root, String id, String pattern) {
+		super(root, 0, id);
+		myPattern = pattern != null ? pattern : "";
+	}
+
+	@Override
+	protected String getSummary() {
+		return super.getSummary().replace("%s", myPattern);
+	}
 }
