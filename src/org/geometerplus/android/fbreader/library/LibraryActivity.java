@@ -39,14 +39,12 @@ import org.geometerplus.android.util.UIUtil;
 import org.geometerplus.fbreader.library.*;
 import org.geometerplus.fbreader.tree.FBTree;
 
-import org.geometerplus.android.fbreader.SQLiteBooksDatabase;
 import org.geometerplus.android.fbreader.FBReader;
-import org.geometerplus.android.fbreader.BookInfoActivity;
 
 import org.geometerplus.android.fbreader.tree.BaseActivity;
 import org.geometerplus.android.fbreader.tree.ListAdapter;
 
-public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItemClickListener, View.OnCreateContextMenuListener {
+public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItemClickListener, View.OnCreateContextMenuListener, Library.ChangeListener {
 	public static final String SELECTED_BOOK_PATH_KEY = "SelectedBookPath";
 
 	static Library LibraryInstance;
@@ -67,6 +65,7 @@ public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItem
 			LibraryInstance = new Library();
 			startService(new Intent(getApplicationContext(), InitializationService.class));
 		}
+		LibraryInstance.addChangeListener(this);
 
 		final String selectedBookPath = getIntent().getStringExtra(SELECTED_BOOK_PATH_KEY);
 		mySelectedBook = null;
@@ -92,7 +91,10 @@ public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItem
 
 	@Override
 	protected void onDestroy() {
-		LibraryInstance = null;
+		if (LibraryInstance != null) {
+			LibraryInstance.removeChangeListener(this);
+			LibraryInstance = null;
+		}
 		super.onDestroy();
 	}
 
@@ -129,7 +131,12 @@ public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItem
 	@Override
 	protected void onActivityResult(int requestCode, int returnCode, Intent intent) {
 		if (requestCode == BOOK_INFO_REQUEST) {
+			final String path = intent.getStringExtra(BookInfoActivity.CURRENT_BOOK_PATH_KEY);
+			final Book book = Book.getByFile(ZLFile.createFileByPath(path));
+			LibraryInstance.refreshBookInfo(book);
 			getListView().invalidateViews();
+		} else {
+			super.onActivityResult(requestCode, returnCode, intent);
 		}
 	} 
 
@@ -142,10 +149,10 @@ public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItem
 	@Override
 	protected void onNewIntent(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			if (runSearch(intent)) {
-				openSearchResults();
-			} else {
-				UIUtil.showErrorMessage(this, "bookNotFound");
+			final String pattern = intent.getStringExtra(SearchManager.QUERY);
+			if (pattern != null && pattern.length() > 0) {
+				BookSearchPatternOption.setValue(pattern);
+				LibraryInstance.startBookSearch(pattern);
 			}
 		} else {
 			super.onNewIntent(intent);
@@ -153,11 +160,7 @@ public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItem
 	}
 
 	private void openSearchResults() {
-		FBTree tree = getCurrentTree();
-		while (tree.Parent != null) {
-			tree = tree.Parent;
-		}
-		tree = tree.getSubTree(Library.ROOT_SEARCH_RESULTS);
+		final FBTree tree = LibraryInstance.getRootTree().getSubTree(Library.ROOT_SEARCH_RESULTS);
 		if (tree != null) {
 			openTree(tree);
 		}
@@ -167,15 +170,6 @@ public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItem
 	public boolean onSearchRequested() {
 		startSearch(BookSearchPatternOption.getValue(), true, null, false);
 		return true;
-	}
-
-	private boolean runSearch(Intent intent) {
-		final String pattern = intent.getStringExtra(SearchManager.QUERY);
-		if (pattern == null || pattern.length() == 0) {
-			return false;
-		}
-		BookSearchPatternOption.setValue(pattern);
-		return LibraryInstance.searchBooks(pattern) != null;
 	}
 
 	//
@@ -319,5 +313,26 @@ public class LibraryActivity extends BaseActivity implements MenuItem.OnMenuItem
 			getListAdapter().replaceAll(getCurrentTree().subTrees());
 		}
 		getListView().invalidateViews();
+	}
+
+	public void onLibraryChanged(final Code code) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				switch (code) {
+					default:
+						getListAdapter().replaceAll(getCurrentTree().subTrees());
+						break;
+					case StatusChanged:
+						setProgressBarIndeterminateVisibility(!LibraryInstance.isUpToDate());
+						break;
+					case Found:
+						openSearchResults();
+						break;
+					case NotFound:
+						UIUtil.showErrorMessage(LibraryActivity.this, "bookNotFound");
+						break;
+				}
+			}
+		});
 	}
 }
