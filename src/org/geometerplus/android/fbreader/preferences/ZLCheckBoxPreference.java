@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 Geometer Plus <contact@geometerplus.com>
+ * Copyright (C) 2009-2011 Geometer Plus <contact@geometerplus.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,23 @@
  * 02110-1301, USA.
  */
 
-package org.geometerplus.fbreader.network.tree;
+package org.geometerplus.android.fbreader.preferences;
 
-import org.geometerplus.fbreader.tree.FBTree;
-import org.geometerplus.fbreader.network.*;
+import android.content.Context;
+import android.preference.CheckBoxPreference;
 
-public class NetworkCatalogRootTree extends NetworkCatalogTree {
-	public NetworkCatalogRootTree(RootTree parent, INetworkLink link, int position) {
-		super(parent, (NetworkCatalogItem)link.libraryItem(), position);
+import org.geometerplus.zlibrary.core.resources.ZLResource;
+
+abstract class ZLCheckBoxPreference extends CheckBoxPreference implements ZLPreference {
+	ZLCheckBoxPreference(Context context, ZLResource rootResource, String resourceKey) {
+		super(context);
+
+		ZLResource resource = rootResource.getResource(resourceKey);
+		setTitle(resource.getValue());
+		setSummaryOn(resource.getResource("summaryOn").getValue());
+		setSummaryOff(resource.getResource("summaryOff").getValue());
 	}
 
-	@Override
-	public String getTreeTitle() {
-		return getName();
-	}
-
-	@Override
-	public int compareTo(FBTree tree) {
-		if (!(tree instanceof NetworkCatalogRootTree)) {
-			return 1;
-		}
-		return Item.Link.compareTo(((NetworkCatalogTree)tree).Item.Link);
+	public void onAccept() {
 	}
 }
