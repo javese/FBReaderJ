@@ -221,6 +221,10 @@ public final class FBReader extends ZLAndroidActivity {
 		myWasStarted = true;
 
 		synchronized (myPluginActions) {
+			int index = 0;
+			while (index < myPluginActions.size()) {
+				fbReader.removeAction(PLUGIN_ACTION_PREFIX + index++);
+			}
 			myPluginActions.clear();
 		}
 
