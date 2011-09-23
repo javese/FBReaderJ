@@ -21,13 +21,16 @@ package org.geometerplus.android.fbreader.network;
 
 import java.util.*;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.geometerplus.zlibrary.core.network.ZLNetworkManager;
+import org.geometerplus.zlibrary.core.resources.ZLResource;
 
 import org.geometerplus.zlibrary.ui.android.network.SQLiteCookieDatabase;
 
@@ -75,10 +78,10 @@ public class NetworkLibraryActivity extends TreeActivity implements NetworkLibra
 			myDeferredIntent = getIntent();
 
 			if (!NetworkLibrary.Instance().isInitialized()) {
-				new NetworkInitializer(this).start();
+				initLibrary();
 			} else {
+				NetworkLibrary.Instance().fireModelChangedEvent(NetworkLibrary.ChangeListener.Code.InitializationFinished);
 				NetworkLibrary.Instance().fireModelChangedEvent(NetworkLibrary.ChangeListener.Code.SomeCode);
-				new NetworkInitializer(this).end(null);
 				if (myDeferredIntent != null) {
 					processIntent(myDeferredIntent);
 					myDeferredIntent = null;
@@ -330,6 +333,7 @@ public class NetworkLibraryActivity extends TreeActivity implements NetworkLibra
 		final NetworkTree lTree = getLoadableNetworkTree(tree);
 		final NetworkTree sTree = RunSearchAction.getSearchTree(tree);
 		setProgressBarIndeterminateVisibility(
+			NetworkLibrary.Instance().isUpdateInProgress() ||
 			NetworkLibrary.Instance().getStoredLoader(lTree) != null ||
 			NetworkLibrary.Instance().getStoredLoader(sTree) != null
 		);
@@ -345,7 +349,11 @@ public class NetworkLibraryActivity extends TreeActivity implements NetworkLibra
 						getListAdapter().replaceAll(getCurrentTree().subTrees());
 						getListView().invalidateViews();
 						break;
+					case InitializationFailed:
+						showInitLibraryDialog((String)params[0]);
+						break;
 					case InitializationFinished:
+						NetworkLibrary.Instance().runBackgroundUpdate(false);
 						if (myDeferredIntent != null) {
 							processIntent(myDeferredIntent);
 							myDeferredIntent = null;
@@ -383,13 +391,9 @@ public class NetworkLibraryActivity extends TreeActivity implements NetworkLibra
 		if (AddCustomCatalogActivity.ADD_CATALOG.equals(intent.getAction())) {
 			final ICustomNetworkLink link = AddCustomCatalogActivity.getLinkFromIntent(intent);
 			if (link != null) {
-				runOnUiThread(new Runnable() {
-					public void run() {
-						final NetworkLibrary library = NetworkLibrary.Instance();
-						library.addCustomLink(link);
-						library.synchronize();
-					}
-				});
+				final NetworkLibrary library = NetworkLibrary.Instance();
+				library.addCustomLink(link);
+				library.synchronize();
 			}
 		}
 	}
@@ -397,5 +401,45 @@ public class NetworkLibraryActivity extends TreeActivity implements NetworkLibra
 	@Override
 	protected void onCurrentTreeChanged() {
 		NetworkLibrary.Instance().fireModelChangedEvent(NetworkLibrary.ChangeListener.Code.SomeCode);
+	}
+
+	private void initLibrary() {
+		UIUtil.wait("loadingNetworkLibrary", new Runnable() {
+			public void run() {
+				if (SQLiteNetworkDatabase.Instance() == null) {
+					new SQLiteNetworkDatabase();
+				}
+                
+				NetworkLibrary.Instance().initialize();
+			}
+		}, this);
+	}
+
+	private void showInitLibraryDialog(String error) {
+		final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if (which == DialogInterface.BUTTON_POSITIVE) {
+					initLibrary();
+				} else {
+					finish();
+				}
+			}
+		};
+
+		final ZLResource dialogResource = ZLResource.resource("dialog");
+		final ZLResource boxResource = dialogResource.getResource("networkError");
+		final ZLResource buttonResource = dialogResource.getResource("button");
+		new AlertDialog.Builder(this)
+			.setTitle(boxResource.getResource("title").getValue())
+			.setMessage(error)
+			.setIcon(0)
+			.setPositiveButton(buttonResource.getResource("tryAgain").getValue(), listener)
+			.setNegativeButton(buttonResource.getResource("cancel").getValue(), listener)
+			.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				public void onCancel(DialogInterface dialog) {
+					listener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+				}
+			})
+			.create().show();
 	}
 }
