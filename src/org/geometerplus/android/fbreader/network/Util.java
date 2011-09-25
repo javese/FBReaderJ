@@ -33,6 +33,7 @@ import org.geometerplus.fbreader.network.authentication.litres.LitResAuthenticat
 import org.geometerplus.fbreader.network.tree.NetworkBookTree;
 import org.geometerplus.fbreader.network.urlInfo.UrlInfo;
 
+import org.geometerplus.android.util.UIUtil;
 import org.geometerplus.android.util.PackageUtil;
 
 public abstract class Util implements UserRegistrationConstants {
@@ -42,11 +43,32 @@ public abstract class Util implements UserRegistrationConstants {
 		"android.fbreader.action.NETWORK_LIBRARY_AUTOSIGNIN";
 
 	static INetworkLink linkByIntent(Intent intent) {
-		return NetworkLibrary.Instance().getLinkByUrl(intent.getData().toString());
+		final Uri uri = intent.getData();
+		return uri != null ? NetworkLibrary.Instance().getLinkByUrl(uri.toString()) : null;
 	}
 
-	static Intent intentByLink(Intent intent, INetworkLink link) {
-		return intent.setData(Uri.parse(link.getUrl(UrlInfo.Type.Catalog)));
+	public static Intent intentByLink(Intent intent, INetworkLink link) {
+		if (link != null) {
+			intent.setData(Uri.parse(link.getUrl(UrlInfo.Type.Catalog)));
+		}
+		return intent;
+	}
+
+	static void initLibrary(Activity activity) {
+		final NetworkLibrary library = NetworkLibrary.Instance();
+		if (library.isInitialized()) {
+			return;
+		}
+
+		UIUtil.wait("loadingNetworkLibrary", new Runnable() {
+			public void run() {
+				if (SQLiteNetworkDatabase.Instance() == null) {
+					new SQLiteNetworkDatabase();
+				}
+                
+				library.initialize();
+			}
+		}, activity);
 	}
 
 	private static boolean testService(Activity activity, String action, String url) {
