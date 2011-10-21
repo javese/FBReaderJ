@@ -25,6 +25,7 @@ import android.app.SearchManager;
 import android.content.*;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -55,7 +56,9 @@ public final class FBReader extends ZLAndroidActivity {
 	final static int REPAINT_CODE = 1;
 	final static int CANCEL_CODE = 2;
 
+	Process evkListenerProcess = null;
 	private int myFullScreenFlag;
+	String appRoot = null;
 
 	private static final String PLUGIN_ACTION_PREFIX = "___";
 	private final List<PluginApi.ActionInfo> myPluginActions =
@@ -138,6 +141,28 @@ public final class FBReader extends ZLAndroidActivity {
 		fbReader.addAction(ActionCode.PROCESS_HYPERLINK, new ProcessHyperlinkAction(this, fbReader));
 
 		fbReader.addAction(ActionCode.SHOW_CANCEL_MENU, new ShowCancelMenuAction(this, fbReader));
+		Process process = null;
+		appRoot = getApplicationContext().getFilesDir().getParent();
+		Log.i("fbreader", "app root = "+appRoot);
+		try{
+
+			process = Runtime.getRuntime().exec("su -c "+appRoot+"/lib/libexechmod.so");
+			
+		
+
+
+
+			process.waitFor();
+
+			}catch(Exception e){
+
+			   e.printStackTrace();
+
+			}finally {
+
+			   process.destroy();
+
+			}	
 	}
 
  	@Override
@@ -239,12 +264,44 @@ public final class FBReader extends ZLAndroidActivity {
 		} catch (Throwable t) {
 		}
 		PopupPanel.restoreVisibilities(FBReaderApp.Instance());
+		Log.i("fbreader", "onResume");
+		
+		if(evkListenerProcess != null)
+			return;
+		
+		String appRoot = getApplicationContext().getFilesDir().getParent();
+		try{
+
+			evkListenerProcess = Runtime.getRuntime().exec("su -c "+appRoot+"/lib/libexefbevklistener.so");
+
+			}catch(Exception e){
+
+			   e.printStackTrace();
+
+			}			
 	}
 
 	@Override
 	public void onStop() {
+		Log.i("fbreader", "onStop");
 		PopupPanel.removeAllWindows(FBReaderApp.Instance());
 		super.onStop();
+		Process process = null;
+		String appRoot = getApplicationContext().getFilesDir().getParent();
+		try{
+
+			process = Runtime.getRuntime().exec("su -c "+appRoot+"/lib/libexekillevklistener.so");
+			process.waitFor();
+			evkListenerProcess = null;
+			}catch(Exception e){
+
+			   e.printStackTrace();
+
+			}finally {
+
+			   process.destroy();
+
+			}		
 	}
 
 	@Override

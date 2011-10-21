@@ -19,21 +19,30 @@
 
 package org.geometerplus.zlibrary.ui.android.view;
 
+import java.io.IOException;
+
 import android.content.Context;
 import android.graphics.*;
 import android.view.*;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import org.geometerplus.zlibrary.core.view.ZLView;
 import org.geometerplus.zlibrary.core.view.ZLViewWidget;
 import org.geometerplus.zlibrary.core.application.ZLApplication;
 
 import org.geometerplus.zlibrary.ui.android.library.ZLAndroidActivity;
+import org.vldmr.edgefb.EdgeFB;
 
 public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongClickListener {
 	private final Paint myPaint = new Paint();
 	private final BitmapManager myBitmapManager = new BitmapManager(this);
 	private Bitmap myFooterBitmap;
+	private int heightExt = 0;
+	private int widthExt = 0;
+    private int[] pixels=new int[600];
+    
+
 
 	public ZLAndroidWidget(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -56,6 +65,12 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 		setFocusableInTouchMode(true);
 		setDrawingCacheEnabled(false);
 		setOnLongClickListener(this);
+
+		for(int i=0;i<600;i++)
+		{
+			pixels[i] = 0xcc;
+		}
+
 	}
 
 	@Override
@@ -78,6 +93,18 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 			System.err.println("A surprise: view's context is not a ZLAndroidActivity");
 		}
 		super.onDraw(canvas);
+		Log.i("fbreader", "getWidth = "+getWidth());
+		if(getWidth() == 480)
+		{
+			widthExt = 120;// for PE;
+			heightExt = 0;
+		}
+		else
+		{
+			widthExt = 225;//for EE;
+			heightExt = 176;
+		}
+		Log.i("fbreader", "getWidth = "+getWidth()+"widthExt = "+widthExt);
 
 //		final int w = getWidth();
 //		final int h = getMainAreaHeight();
@@ -157,7 +184,7 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 
 	public void startManualScrolling(int x, int y, ZLView.Direction direction) {
 		final AnimationProvider animator = getAnimationProvider();
-		animator.setup(direction, getWidth(), getMainAreaHeight());
+		animator.setup(direction, getWidth()+widthExt, getMainAreaHeight());
 		animator.startManualScrolling(x, y);
 	}
 
@@ -176,7 +203,7 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 			return;
 		}
 		final AnimationProvider animator = getAnimationProvider();
-		animator.setup(direction, getWidth(), getMainAreaHeight());
+		animator.setup(direction, getWidth()+widthExt, getMainAreaHeight());
 		animator.startAnimatedScrolling(pageIndex, x, y, speed);
 		if (animator.getMode().Auto) {
 			postInvalidate();
@@ -189,7 +216,7 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 			return;
 		}
 		final AnimationProvider animator = getAnimationProvider();
-		animator.setup(direction, getWidth(), getMainAreaHeight());
+		animator.setup(direction, getWidth()+widthExt, getMainAreaHeight());
 		animator.startAnimatedScrolling(pageIndex, null, null, speed);
 		if (animator.getMode().Auto) {
 			postInvalidate();
@@ -215,7 +242,7 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 
 		final ZLAndroidPaintContext context = new ZLAndroidPaintContext(
 			new Canvas(bitmap),
-			getWidth(),
+			getWidth()+widthExt,
 			getMainAreaHeight(),
 			view.isScrollbarShown() ? getVerticalScrollbarWidth() : 0
 		);
@@ -237,22 +264,44 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 			myFooterBitmap = null;
 		}
 		if (myFooterBitmap == null) {
-			myFooterBitmap = Bitmap.createBitmap(getWidth(), footer.getHeight(), Bitmap.Config.RGB_565);
+			myFooterBitmap = Bitmap.createBitmap(getWidth()+widthExt, footer.getHeight(), Bitmap.Config.RGB_565);
 		}
 		final ZLAndroidPaintContext context = new ZLAndroidPaintContext(
 			new Canvas(myFooterBitmap),
-			getWidth(),
+			getWidth()+widthExt,
 			footer.getHeight(),
 			view.isScrollbarShown() ? getVerticalScrollbarWidth() : 0
 		);
 		footer.paint(context);
-		canvas.drawBitmap(myFooterBitmap, 0, getHeight() - footer.getHeight(), myPaint);
+		canvas.drawBitmap(myFooterBitmap, 0, getHeight()+heightExt - footer.getHeight(), myPaint);
 	}
 
 	private void onDrawStatic(Canvas canvas) {
-		myBitmapManager.setSize(getWidth(), getMainAreaHeight());
+		myBitmapManager.setSize(getWidth()+widthExt, getMainAreaHeight());
 		canvas.drawBitmap(myBitmapManager.getBitmap(ZLView.PageIndex.current), 0, 0, myPaint);
 		drawFooter(canvas);
+	       try {
+	            EdgeFB fb=new EdgeFB(2);
+	            int newPixel = 0;
+	            Boolean toUpdate  = false;
+	            Bitmap bmf=Bitmap.createScaledBitmap(myBitmapManager.getBitmap(ZLView.PageIndex.current), fb.getWidth(), fb.getHeight(), true);
+	    		for(int i=0;i<600;i++)
+	    		{
+	    			newPixel = bmf.getPixel(i,i);
+	    			if(pixels[i] != newPixel)
+	    				toUpdate = true;
+	    			pixels[i]  = newPixel;
+	    		}
+                
+	    		if(toUpdate)
+	    		{
+	    			fb.transfer(bmf, true);
+	    		}
+	    		
+	            bmf.recycle();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }			
 	}
 
 	@Override
@@ -487,6 +536,6 @@ public class ZLAndroidWidget extends View implements ZLViewWidget, View.OnLongCl
 
 	private int getMainAreaHeight() {
 		final ZLView.FooterArea footer = ZLApplication.Instance().getCurrentView().getFooterArea();
-		return footer != null ? getHeight() - footer.getHeight() : getHeight();
+		return footer != null ? getHeight()+heightExt - footer.getHeight() : (getHeight()+heightExt);
 	}
 }
