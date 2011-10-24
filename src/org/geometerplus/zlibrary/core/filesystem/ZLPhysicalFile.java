@@ -91,9 +91,9 @@ public final class ZLPhysicalFile extends ZLFile {
 
 		ArrayList<ZLFile> entries  = new ArrayList<ZLFile>(subFiles.length);
 		for (File f : subFiles) {
-			if (!f.getName().startsWith(".")) {
+		//	if (!f.getName().startsWith(".")) {
 				entries.add(new ZLPhysicalFile(f));
-			}
+	//		}
 		}
 		return entries;
 	}
