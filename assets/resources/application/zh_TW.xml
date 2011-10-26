@@ -35,6 +35,12 @@
 		<node name="fileTreeCard" value="記憶卡">
 			<node name="summary" value="插入裝置內的記憶卡"/>
 		</node>
+		<node name="fileTreeEdgeInternalLibrary" value="Edge內部書庫">
+			<node name="summary" value="Edge設備上的書庫"/>
+		</node>
+		<node name="fileTreeEdgeExternalLibrary" value="Edge外部書庫">
+			<node name="summary" value="Edge插入裝置內的記憶卡上的書庫"/>
+		</node>		
 		<node name="fileTreeLibrary" value="FBReader 書目">
 			<node name="summary" value="FBReader 書藉目錄"/>
 		</node>

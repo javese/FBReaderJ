@@ -35,6 +35,12 @@
 		<node name="fileTreeCard" value="SD存储卡">
 			<node name="summary" value="插入设备的存储卡"/>
 		</node>
+		<node name="fileTreeEdgeInternalLibrary" value="Edge内部书库">
+			<node name="summary" value="Edge设备上的书库"/>
+		</node>
+		<node name="fileTreeEdgeExternalLibrary" value="Edge外部书库">
+			<node name="summary" value="Edge插入设备的存储卡上的书库"/>
+		</node>
 		<node name="fileTreeLibrary" value="FBReader 书库">
 			<node name="summary" value="FBReader 书文目录"/>
 		</node>

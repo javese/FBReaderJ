@@ -30,6 +30,8 @@ public class FileFirstLevelTree extends FirstLevelTree {
 		addChild(Paths.BooksDirectoryOption().getValue(), "fileTreeLibrary");
 		addChild("/", "fileTreeRoot");
 		addChild(Paths.cardDirectory(), "fileTreeCard");
+		addChild("/sdcard/.edge/.esi-content", "fileTreeEdgeExternalLibrary");
+		addChild("/intsdcard/.edge/.esi-content", "fileTreeEdgeInternalLibrary");
 	}
 
 	private void addChild(String path, String resourceKey) {

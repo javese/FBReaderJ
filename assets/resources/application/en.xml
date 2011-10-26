@@ -35,6 +35,12 @@
 		<node name="fileTreeCard" value="Memory card">
 			<node name="summary" value="Memory card inserted into the device"/>
 		</node>
+		<node name="fileTreeEdgeInternalLibrary" value="Edge internal library">
+			<node name="summary" value="Edge library in device"/>
+		</node>
+		<node name="fileTreeEdgeExternalLibrary" value="Edge external library">
+			<node name="summary" value="Edge library in memory card"/>
+		</node>
 		<node name="fileTreeLibrary" value="FBReader library">
 			<node name="summary" value="FBReader books directory"/>
 		</node>
